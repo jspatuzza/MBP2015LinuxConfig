@@ -1,6 +1,8 @@
 /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
 
-// ### DEFAULT Laptop  - Top ### //
+[
+
+// ### Monitor externo (HDMI-A-2) — configuración completa ###
 {
 "include": [
   "$HOME/.config/waybar/Modules",
@@ -9,8 +11,8 @@
   "$HOME/.config/waybar/ModulesGroups",
   "$HOME/.config/waybar/UserModules",
   ],
+"output": "HDMI-A-2",
 "layer": "top",
-//"mode": "dock",
 "exclusive": true,
 "passthrough": false,
 "position": "top",
@@ -22,32 +24,75 @@
 "margin-right": 8,
 
 "modules-left": [
-	"custom/separator#blank",
-	"custom/cava_mviz",
+	"hyprland/workspaces#rw",
 	"custom/separator#blank",
 	"custom/playerctl",
-	"custom/separator#blank",
-	"hyprland/window",
 	],
 
 "modules-center": [
 	"custom/separator#blank",
-  "group/app_drawer",
 	"group/notify",
-	"hyprland/workspaces#rw",
-	"clock",
+	"custom/clock",
 	"custom/weather",
-	"idle_inhibitor",	
-	"custom/hint",	
+	"group/modes",
 	],
 
 "modules-right": [
 	"tray",
-	"network#speed",
-	"group/laptop",
-	"group/mobo_drawer",
+	"custom/keyboard",
 	"group/audio",
+	"group/laptop",
+	"network",
+	"group/status",
+	],
+},
+
+// ### Monitor integrado (eDP-1) — sin indicadores de rendimiento ###
+{
+"include": [
+  "$HOME/.config/waybar/Modules",
+  "$HOME/.config/waybar/ModulesWorkspaces",
+  "$HOME/.config/waybar/ModulesCustom",
+  "$HOME/.config/waybar/ModulesGroups",
+  "$HOME/.config/waybar/UserModules",
+  ],
+"output": "eDP-1",
+"layer": "top",
+"exclusive": true,
+"passthrough": false,
+"position": "top",
+"spacing": 3,
+"fixed-center": true,
+"ipc": true,
+"margin-top": 3,
+"margin-left": 8,
+"margin-right": 8,
+
+"modules-left": [
+	"hyprland/workspaces#rw",
+	"custom/separator#blank",
+	"custom/playerctl",
+	],
+
+"modules-center": [
+	"custom/separator#blank",
+	"group/notify",
+	"custom/clock",
+	"custom/weather",
 	"custom/nightlight",
+	"custom/light_dark",
+	"idle_inhibitor",
+	"group/brightness",
+	],
+
+"modules-right": [
+	"tray",
+	"custom/keyboard",
+	"group/audio",
+	"group/laptop",
+	"network",
 	"group/status",
 	],
 }
+
+]

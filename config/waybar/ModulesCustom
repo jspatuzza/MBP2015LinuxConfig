@@ -13,7 +13,7 @@
 	"return-type": "json",
 	//"exec": "$HOME/.config/hypr/UserScripts/Weather.py",
 	//"exec": "$HOME/.config/hypr/UserScripts/Weather.sh",
-	"exec": "$HOME/.config/hypr/UserScripts/WeatherWrap.sh",
+	"exec": "env WEATHER_LANG=es WEATHER_LAT=-34.3603 WEATHER_LON=-58.68742 $HOME/.config/hypr/UserScripts/WeatherWrap.sh",
 	//"exec-if": "ping wttr.in -c1",
 	"tooltip": true,
 },
@@ -22,35 +22,35 @@
 	"format": "",
 	"on-click": "hyprpicker | wl-copy",
 	"tooltip": true,
-	"tooltip-format": "Hyprpicker",
+	"tooltip-format": "Capturar color",
 },
 
 "custom/file_manager": {
 	"format": " ",
 	"on-click": "$HOME/.config/hypr/scripts/WaybarScripts.sh --files",
 	"tooltip": true,
-	"tooltip-format": "File Manager",
+	"tooltip-format": "Gestor de archivos",
 },
 
 "custom/tty": {
 	"format": " ",
 	"on-click": "$HOME/.config/hypr/scripts/WaybarScripts.sh --term",
 	"tooltip": true,
-	"tooltip-format": "Launch Terminal",
+	"tooltip-format": "Terminal",
 },
 
 "custom/browser": {
 	"format": " ",
 	"on-click": "xdg-open https://",
 	"tooltip": true,
-	"tooltip-format": "Launch Browser",
+	"tooltip-format": "Navegador web",
 },
 
 "custom/settings": {
 	"format": " ",
 	"on-click": "$HOME/.config/hypr/scripts/Kool_Quick_Settings.sh",
 	"tooltip": true,
-	"tooltip-format": "Launch KooL Hyprland Settings Menu",
+	"tooltip-format": "Configuración de Hyprland",
 },
 
 "custom/cycle_wall": {
@@ -59,7 +59,7 @@
 	"on-click-right": "$HOME/.config/hypr/UserScripts/WallpaperRandom.sh",
 	"on-click-middle": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Wallpaper Menu\nMiddle Click: Random wallpaper\nRight Click: Waybar Styles Menu",
+	"tooltip-format": "Clic izquierdo: menú de fondos\nClic medio: fondo aleatorio\nClic derecho: estilos de barra",
 },
 
 "custom/hint": {
@@ -67,14 +67,14 @@
 	"on-click": "$HOME/.config/hypr/scripts/KeyHints.sh",
 	"on-click-right": "$HOME/.config/hypr/scripts/KeyBinds.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Quick Tips\nRight Click: Keybinds",
+	"tooltip-format": "Clic izquierdo: consejos rápidos\nClic derecho: atajos de teclado",
 },
 
 "custom/dot_update": {
 	"format": " 󰁈 ",
 	"on-click": "$HOME/.config/hypr/scripts/KooLsDotsUpdate.sh",
 	"tooltip": true,
-	"tooltip-format": "Check KooL Dots update\nIf available",
+	"tooltip-format": "Buscar actualizaciones de dotfiles",
 },
 
 // Hypridle inhibitor
@@ -97,32 +97,28 @@
 },
 
 "custom/light_dark": {
-	"format": "󰔎 ",
+	"format": "󰔎",
 	"on-click": "$HOME/.config/hypr/scripts/DarkLight.sh",
 	"on-click-right": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Switch Dark-Light Themes\nMiddle Click: Wallpaper Menu\nRight Click: Waybar Styles Menu",
+	"tooltip-format": "Clic izquierdo: alternar tema claro/oscuro\nClic medio: menú de fondos\nClic derecho: estilos de barra",
 },
 
 // Night light (Hyprsunset)
 "custom/nightlight": {
-	"return-type": "json",
 	"exec": "$HOME/.config/hypr/scripts/Hyprsunset.sh status",
 	"interval": 3,
-	"format": "{text}",
-	"min-length": 2,
+	"format": "{}",
 	"on-click": "$HOME/.config/hypr/scripts/Hyprsunset.sh toggle",
-	"tooltip": true,
-	"tooltip-format": "Night light toggle",
-	"escape": false
+	"tooltip": false,
 },
 
 "custom/lock": {
 	"format": "󰌾",
 	"on-click": "$HOME/.config/hypr/scripts/LockScreen.sh",
 	"tooltip": true,
-	"tooltip-format": "󰷛 Screen Lock",
+	"tooltip-format": "󰷛 Bloquear pantalla",
 },
 
 "custom/menu": {
@@ -131,7 +127,7 @@
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"on-click-right": "$HOME/.config/hypr/scripts/WaybarLayout.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Rofi Menu\nMiddle Click: Wallpaper Menu\nRight Click: Waybar Layout Menu",
+	"tooltip-format": "Clic izquierdo: menú de apps\nClic medio: menú de fondos\nClic derecho: disposición de barra",
 },
 // This is a custom cava visualizer
 "custom/cava_mviz": {
@@ -158,26 +154,25 @@
 	"on-click": "$HOME/.config/hypr/scripts/Wlogout.sh",
 	"on-click-right": "$HOME/.config/hypr/scripts/ChangeBlur.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Logout Menu\nRight Click: Change Blur",
+	"tooltip-format": "Opciones de sistema",
 },
 
 "custom/reboot": {
-    "format": "󰜉",
-    "on-click": "systemctl reboot",
-    "tooltip": true,
-	"tooltip-format": "Left Click: Reboot",
+    "format": "󰜉  Reiniciar",
+    "on-click": "$HOME/.config/hypr/UserScripts/ConfirmAction.sh reiniciar",
+    "tooltip": false,
 },
     
 "custom/quit": {
     "format": "󰗼",
     "on-click": "hyprctl dispatch exit",
     "tooltip": true,
-	"tooltip-format": "Left Click: Exit Hyprland",
+	"tooltip-format": "Salir de Hyprland",
 },
 
 "custom/swaync": {
 	"tooltip": true,
-	"tooltip-format": "Left Click: Launch Notification Center\nRight Click: Do not Disturb",
+	"tooltip-format": "Clic izquierdo: centro de notificaciones\nClic derecho: no molestar",
 	"format": "{} {icon} ",
 	"format-icons": {
 		"notification": "<span foreground='red'><sup></sup></span>",
@@ -205,7 +200,7 @@
 	"interval": 43200, // (Arch Linux will try to check 12 hrs interval only
 	"on-click": "$HOME/.config/hypr/scripts/Distro_update.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Update System\nArch (w/ notification)\nFedora, OpenSuse, Debian/Ubuntu click to update",
+	"tooltip-format": "Actualizar el sistema",
 },
 // Separators
 "custom/separator#dot": {
@@ -286,5 +281,15 @@
 "custom/arrow10": {
 	"format": "",
 	"tooltip": false
+},
+
+"custom/kbd_backlight": {
+	"exec": "$HOME/.config/hypr/scripts/KbdBrightness.sh",
+	"interval": 5,
+	"format": "{}",
+	"tooltip": false,
+	"on-scroll-up": "$HOME/.config/hypr/scripts/KbdBrightness.sh --inc",
+	"on-scroll-down": "$HOME/.config/hypr/scripts/KbdBrightness.sh --dec",
+	"smooth-scrolling-threshold": 1,
 }
 }

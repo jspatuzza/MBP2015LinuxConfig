@@ -14,7 +14,6 @@
         },
 	"modules": [
 		"custom/menu",
-		"custom/light_dark",
 		"custom/file_manager",
 		"custom/tty",
 		"custom/browser",
@@ -50,7 +49,6 @@
 "group/laptop": {
 	"orientation": "inherit",
 	"modules": [
-		"backlight",
 		"battery",
 	]
 },
@@ -89,9 +87,9 @@
         },
 	"modules": [
 		"custom/power",
-		"custom/lock",
-		"keyboard-state",
-		"custom/keyboard",
+		"custom/shutdown",
+		"custom/suspend",
+		"custom/reboot",
 	]
 },
 "group/notify": {
@@ -116,10 +114,36 @@
       },
     "modules": [
         "custom/power",
-        "custom/quit",
         "custom/lock",
         "custom/reboot"
       ]
+},
+"group/brightness": {
+	"orientation": "inherit",
+	"modules": [
+		"backlight",
+		"custom/kbd_backlight",
+	]
+},
+"group/modes": {
+	"orientation": "inherit",
+	"modules": [
+		"custom/nightlight",
+		"custom/light_dark",
+		"idle_inhibitor",
+	]
+},
+"group/display": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "custom/nightlight",
+		"transition-left-to-right": false
+	},
+	"modules": [
+		"custom/nightlight",
+		"custom/light_dark",
+	]
 },
 // groups for vertical
 "group/power#vert": {

@@ -41,13 +41,10 @@ done
 
 #Restart waybar
 sleep 0.1
-waybar &
+env LANG=es_ES.UTF-8 LC_ALL=es_ES.UTF-8 waybar &
 
-# relaunch swaync
-sleep 0.3
-swaync >/dev/null 2>&1 &
-# reload swaync
-swaync-client --reload-config
+# recargar mako
+makoctl reload 2>/dev/null || true
 
 # Relaunching rainbow borders if the script exists
 sleep 1

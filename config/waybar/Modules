@@ -26,19 +26,14 @@
 	"interval": 2,
 	"align": 0,
 	"rotate": 0,
-	//"format": "{icon} {percent}%",
+	"format": "{icon} {percent}%",
 	"format-icons": [
-		" ",
-		" ",
-		" ",
-		"󰃝 ",
-		"󰃞 ",
-		"󰃟 ",
-		"󰃠 "
+		"󰃝",
+		"󰃞",
+		"󰃟",
+		"󰃠"
 	],
-	"format": "{icon}",
-	//"format-icons": ["","","","","","","","","","","","","","",""],
-	"tooltip-format": "backlight {percent}%",
+	"tooltip-format": "Brillo: {percent}%",
 	"icon-size": 10,
 	"on-click": "",
 	"on-click-middle": "",
@@ -51,8 +46,11 @@
 
 "backlight#2": {
   "device": "intel_backlight",
-  "format": "{icon} {percent}%",
-  "format-icons": ["", ""]
+  "format": "{percent}%",
+  "tooltip-format": "Brillo: {percent}%",
+  "on-scroll-up": "$HOME/.config/hypr/scripts/Brightness.sh --inc",
+  "on-scroll-down": "$HOME/.config/hypr/scripts/Brightness.sh --dec",
+  "smooth-scrolling-threshold": 1,
 },
 
 "battery": {
@@ -72,7 +70,7 @@
 	"format-charging": " {capacity}%",
 	"format-plugged": "󱘖 {capacity}%",
 	"format-alt-click": "click",
-	"format-full": "{icon} Full",
+	"format-full": "{icon} {capacity}%",
 	"format-alt": "{icon} {time}",
 	"format-icons": [
 		"󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
@@ -96,9 +94,9 @@
 },
 
 "clock": {
-	"interval": 1,
+	"interval": 60,
     //"format": " {:%I:%M %p}", // AM PM format
-    "format": " {:%H:%M:%S}", // 24H
+	"format": " {:%H:%M}", // 24H sin segundos
 	"format-alt": " {:L%H:%M   %Y, %d %B, %A}",
 	"tooltip-format": "<tt><small>{calendar}</small></tt>",
 	"calendar": {
@@ -106,6 +104,7 @@
 		"mode-mon-col": 3,
 		"weeks-pos": "right",
 		"on-scroll": 1,
+			"locale": "es_ES.UTF-8",
 		"format": {
 			"months": "<span color='#ffead3'><b>{}</b></span>",
 			"days": "<span color='#ecc6d9'><b>{}</b></span>",
@@ -192,7 +191,7 @@
 	"max-length": 25,
 	"separate-outputs": true,
 	"offscreen-css": true,
-	"offscreen-css-text": "(inactive)",
+	"offscreen-css-text": "(inactivo)",
 	"rewrite": {
 		"(.*) — Mozilla Firefox": " $1",
 		"(.*) - fish": "> [$1]",
@@ -203,12 +202,12 @@
 
 "idle_inhibitor": {
 	"tooltip": true,
-	"tooltip-format-activated": "Idle_inhibitor active",
-	"tooltip-format-deactivated": "Idle_inhibitor not active",
+	"tooltip-format-activated": "Inhibidor de inactividad activo",
+	"tooltip-format-deactivated": "Inhibidor de inactividad inactivo",
 	"format": "{icon}",
 	"format-icons": {
-		"activated": " ",
-		"deactivated": " ",
+		"activated": "",
+		"deactivated": "",
 	}
 },
 
@@ -247,7 +246,7 @@
 	"on-scroll-down": "$HOME/.config/hypr/scripts/Volume.sh --dec",
 	"smooth-scrolling-threshold": 1,
 	"tooltip": true,
-	"tooltip-format": "{status_icon} {dynamic}\nLeft Click: previous\nMid Click: Pause\nRight Click: Next",
+	"tooltip-format": "{status_icon} {dynamic}\nClic izquierdo: anterior\nClic medio: pausa\nClic derecho: siguiente",
 	"player-icons": {
 		"chromium": "",
 		"default": "",
@@ -269,34 +268,32 @@
 
 "network": {
 	"format": "{ifname}",
-	"format-wifi": "{icon}",
-	"format-ethernet": "󰌘",
+	"format-wifi": "{icon} {essid}",
+	"format-ethernet": "󰌘 {ifname}",
 	"format-disconnected": "󰌙",
 	"tooltip-format": "{ipaddr}  {bandwidthUpBits}  {bandwidthDownBits}",
 	"format-linked": "󰈁 {ifname} (No IP)",
 	"tooltip-format-wifi": "{essid} {icon} {signalStrength}%",
 	"tooltip-format-ethernet": "{ifname} 󰌘",
-	"tooltip-format-disconnected": "󰌙 Disconnected",
+	"tooltip-format-disconnected": "󰌙 Desconectado",
 	"max-length": 30,
 	"format-icons": [
 		"󰤯", "󰤟", "󰤢", "󰤥", "󰤨"
 	],
-	"on-click-right": "$HOME/.config/hypr/scripts/WaybarScripts.sh --nmtui"
+	"on-click": "$HOME/.config/hypr/UserScripts/WifiMenu.sh"
 },
 
 "network#speed": {
 	"interval": 1,
 	"format": "{ifname}",
-	"format-wifi": "{icon}  {bandwidthUpBytes}  {bandwidthDownBytes}",
-	"format-ethernet": "󰌘  {bandwidthUpBytes}  {bandwidthDownBytes}",
+	"format-wifi": "{icon}",
+	"format-ethernet": "",
 	"format-disconnected": "󰌙",
 	"tooltip-format": "{ipaddr}",
 	"format-linked": "󰈁 {ifname} (No IP)",
 	"tooltip-format-wifi": "{essid} {icon} {signalStrength}%",
 	"tooltip-format-ethernet": "{ifname} 󰌘",
-	"tooltip-format-disconnected": "󰌙 Disconnected",
-	"min-length": 24,
-	"max-length": 24,
+	"tooltip-format-disconnected": "󰌙 Desconectado",
 	"format-icons": [
 		"󰤯", "󰤟", "󰤢", "󰤥", "󰤨"
 	]
@@ -404,4 +401,14 @@
     "kitty-dropterm"
 		],
 },
+
+"custom/clock": {
+	"exec": "python3 $HOME/.config/hypr/UserScripts/WaybarClock.py",
+	"return-type": "json",
+	"interval": 60,
+	"format": "{}",
+	"tooltip": true,
+	"escape": false,
+},
+
 }

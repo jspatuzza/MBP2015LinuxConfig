@@ -1,31 +1,18 @@
 /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
-/* Catppuccin Latte - Wallust */
-/* Original Design by DC user mannatsingh */
+/* Light Mode — Aurora Ivory */
+/* Fondo marfil translúcido, texto e iconos en grafito */
 
-@define-color white      	#F2F2F2;
-@define-color black      	#000000;
-@define-color text       	#FFFFFF;
-@define-color lightgray  	#686868;
-@define-color darkgray   	#353535;
+@define-color graphite     #2d2d2d;
+@define-color graphite-mid #4a4a4a;
+@define-color graphite-dim rgba(45, 45, 45, 0.5);
 
-@define-color aurora        #00C4D4;
-@define-color transparent	rgba(1, 1, 1, 0.5);
-@define-color teal-trans	rgba(1, 117, 84, 0.5);
-@define-color cyan			rgba(53, 140, 169, 1);
-
-@define-color background-module     @transparent;
-@define-color border-color          @color12;
-@define-color button-color          @color11;
-@define-color button-hover          @color13;
-
-@import '../../.config/waybar/wallust/colors-waybar.css';
-@import "../waybar/style/catppuccin-themes/latte.css";
+@define-color background-module rgba(255, 255, 240, 0.0);
+@define-color border-color      rgba(45, 45, 45, 0.35);
 
 * {
     font-family: "JetBrainsMono Nerd Font";
     font-weight: bold;
-	min-height: 0;  
-    /* set font-size to 100% if font scaling is set to 1.00 using nwg-look */
+    min-height: 0;
     font-size: 97%;
     font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
 }
@@ -33,7 +20,7 @@
 window#waybar {
     background: transparent;
     border-radius: 0px;
-    color: @aurora;
+    color: @graphite;
 }
 
 window#waybar.hidden {
@@ -41,40 +28,40 @@ window#waybar.hidden {
 }
 
 tooltip {
-    background: rgba(30, 30, 30, 0.95);
+    background: rgba(240, 240, 220, 0.97);
     border-radius: 12px;
     border-width: 1px;
     border-style: solid;
-    border-color: @aurora;
-    color: @aurora;
+    border-color: @graphite;
+    color: @graphite;
 }
 
 /*-----module groups----*/
 .modules-left,
 .modules-center,
 .modules-right {
-    background-color: rgba(45, 45, 45, 0.85);
-    border-radius:15px;
-    border:1px solid @aurora;
-	padding-top: 2px;
-	padding-bottom: 0px;
-	padding-right: 4px;
-	padding-left: 4px;
+    background-color: rgba(255, 255, 240, 0.85);
+    border-radius: 15px;
+    border: 1px solid @graphite;
+    padding-top: 2px;
+    padding-bottom: 0px;
+    padding-right: 4px;
+    padding-left: 4px;
 }
 
 #workspaces {
     padding: 0px 1px;
     border-radius: 15px;
-    border: 1px solid @aurora;
+    border: 1px solid @graphite;
     font-weight: bold;
     font-style: normal;
     opacity: 0.8;
-    color: @aurora;
+    color: @graphite;
 }
 
 #taskbar button,
 #workspaces button {
-    color: rgba(0, 196, 212, 0.45);
+    color: rgba(45, 45, 45, 0.4);
     box-shadow: none;
     text-shadow: none;
     border-radius: 30px;
@@ -85,8 +72,8 @@ tooltip {
 
 #taskbar button.active,
 #workspaces button.active {
-    color: @aurora;
-    background-color: rgba(0, 196, 212, 0.15);
+    color: @graphite;
+    background-color: rgba(45, 45, 45, 0.12);
     border-radius: 15px 15px 15px 15px;
     padding-left: 8px;
     padding-right: 8px;
@@ -94,17 +81,18 @@ tooltip {
 }
 
 #workspaces button.focused {
-    color: @aurora;
+    color: @graphite;
 }
 
 #workspaces button.urgent {
-    color: #f53c3c;
+    color: #cc0000;
     border-radius: 10px;
 }
 
 #taskbar button:hover,
 #workspaces button:hover {
-    color: @aurora;
+    color: @graphite;
+    background-color: rgba(45, 45, 45, 0.08);
     border-radius: 10px;
     padding-left: 2px;
     padding-right: 2px;
@@ -163,16 +151,16 @@ tooltip {
 #custom-weather.clearNight,
 #custom-weather.cloudyFoggyDay,
 #custom-weather.cloudyFoggyNight,
-#custom-weather.default, 
+#custom-weather.default,
 #custom-weather.rainyDay,
 #custom-weather.rainyNight,
 #custom-weather.severe,
 #custom-weather.showyIcyDay,
 #custom-weather.snowyIcyNight,
 #custom-weather.sunnyDay {
-    color: @aurora;
-	padding-right: 6px;
-	padding-left: 6px;;
+    color: @graphite;
+    padding-right: 6px;
+    padding-left: 6px;
 }
 
 #temperature.critical {
@@ -181,7 +169,7 @@ tooltip {
 
 @keyframes blink {
     to {
-        color: #000000;
+        color: #cc0000;
     }
 }
 
@@ -200,86 +188,55 @@ tooltip {
     min-width: 80px;
     min-height: 5px;
     border-radius: 5px;
-    background-color: #22252a;
+    background-color: rgba(45, 45, 45, 0.15);
 }
 
 #backlight-slider highlight,
 #pulseaudio-slider highlight {
     min-height: 10px;
     border-radius: 5px;
-    background-color: #ba5663;
-}
-
-#pulseaudio-slider,
-#pulseaudio {
-	color: @aurora;
+    background-color: @graphite;
 }
 
 #pulseaudio.muted {
-    color: red;
-}
-
-#memory {
-	color: @aurora;
-}
-
-#cpu {
-	color: @aurora;
-}
-
-#battery {
-	color: @aurora;
-}
-
-#disk {
-	color: @aurora;
-}
-
-#temperature.critical {
-    background-color: @red;
+    color: #cc0000;
 }
 
 #battery.critical:not(.charging) {
-	color: #f53c3c;
-	animation-name: blink;
-	animation-duration: 3.0s;
-	animation-timing-function: steps(12);
-	animation-iteration-count: infinite;
-	animation-direction: alternate;
+    color: #cc0000;
+    animation-name: blink;
+    animation-duration: 3.0s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
 }
 
 #custom-hypridle,
 #custom-lock,
 #idle_inhibitor {
-    color: @aurora;
+    color: @graphite;
 }
 
 /*-----Indicators----*/
 #custom-hypridle.notactive,
 #idle_inhibitor.activated {
-    color: #39FF14;
-}
-
-
-#clock#2 {
-    color: #efe8f7;
+    color: #008800;
 }
 
 #clock {
-	color: @aurora;
+    color: @graphite;
     border-radius: 15px;
-    border:2px solid @border-color;
+    border: 2px solid @border-color;
 }
+
 #custom-updates {
-    color: @yellow;
+    color: @graphite-mid;
 }
-#swaync{
-    color: #ffd700;}
 
 #group-brightness {
-    background-color: rgba(0, 196, 212, 0.12);
+    background-color: rgba(45, 45, 45, 0.08);
     border-radius: 10px;
-    border: 1px solid rgba(0, 196, 212, 0.4);
+    border: 1px solid rgba(45, 45, 45, 0.3);
     margin: 0 6px;
     padding: 0 4px;
 }

@@ -4,10 +4,7 @@
 # Note: Scripts are looking for keywords Light or Dark except for wallpapers as the are in a separate directories
 
 # Paths
-PICTURES_DIR="$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")"
-wallpaper_base_path="$PICTURES_DIR/wallpapers/Dynamic-Wallpapers"
-dark_wallpapers="$wallpaper_base_path/Dark"
-light_wallpapers="$wallpaper_base_path/Light"
+wallpaper="$HOME/Imágenes/Wallpaper.jpg"
 hypr_config_path="$HOME/.config/hypr"
 swaync_style="$HOME/.config/swaync/style.css"
 ags_style="$HOME/.config/ags/user/style.css"
@@ -31,22 +28,11 @@ for pid in waybar rofi swaync ags swaybg; do
 done
 
 
-# Initialize swww if needed
-swww query || swww-daemon --format xrgb
-
-# Set swww options
-swww="swww img"
-effect="--transition-bezier .43,1.19,1,.4 --transition-fps 60 --transition-type grow --transition-pos 0.925,0.977 --transition-duration 2"
-
 # Determine current theme mode
 if [ "$(cat $HOME/.cache/.theme_mode)" = "Light" ]; then
     next_mode="Dark"
-    # Logic for Dark mode
-    wallpaper_path="$dark_wallpapers"
 else
     next_mode="Light"
-    # Logic for Light mode
-    wallpaper_path="$light_wallpapers"
 fi
 # Select Qt color scheme templates for the upcoming mode
 if [ "$next_mode" = "Dark" ]; then
@@ -76,22 +62,33 @@ fi
 
 # Function to set Waybar style
 set_waybar_style() {
-    theme="$1"
     waybar_styles="$HOME/.config/waybar/style"
     waybar_style_link="$HOME/.config/waybar/style.css"
-    style_prefix="\\[${theme}\\].*\\.css$"
 
-    style_file=$(find -L "$waybar_styles" -maxdepth 1 -type f -regex ".*$style_prefix" | shuf -n 1)
+    if [ "$next_mode" = "Dark" ]; then
+        style_file="$waybar_styles/[Dark] Latte-Wallust combined.css"
+    else
+        style_file="$waybar_styles/[Light] Aurora-Ivory.css"
+    fi
 
-    if [ -n "$style_file" ]; then
+    if [ -f "$style_file" ]; then
         ln -sf "$style_file" "$waybar_style_link"
     else
-        echo "Style file not found for $theme theme."
+        echo "Style file not found: $style_file"
     fi
 }
 
-# Call the function after determining the mode
-set_waybar_style "$next_mode"
+# Aplicar tema correspondiente al modo
+set_waybar_style
+
+# Cambiar config de mako
+if [ "$next_mode" = "Dark" ]; then
+    cp "$HOME/.config/mako/config-dark" "$HOME/.config/mako/config"
+else
+    cp "$HOME/.config/mako/config-light" "$HOME/.config/mako/config"
+fi
+makoctl reload 2>/dev/null || true
+
 notify_user "$next_mode"
 
 
@@ -132,15 +129,9 @@ for pid_kitty in $(pidof kitty); do
     kill -SIGUSR1 "$pid_kitty"
 done
 
-# Set Dynamic Wallpaper for Dark or Light Mode
-if [ "$next_mode" = "Dark" ]; then
-    next_wallpaper="$(find -L "${dark_wallpapers}" -type f \( -iname "*.jpg" -o -iname "*.png" \) -print0 | shuf -n1 -z | xargs -0)"
-else
-    next_wallpaper="$(find -L "${light_wallpapers}" -type f \( -iname "*.jpg" -o -iname "*.png" \) -print0 | shuf -n1 -z | xargs -0)"
-fi
-
-# Update wallpaper using swww command
-$swww "${next_wallpaper}" $effect
+# Restaurar wallpaper con swaybg
+pkill swaybg 2>/dev/null || true
+swaybg -i "$wallpaper" -m fill &
 
 
 # Set Kvantum Manager theme & QT5/QT6 settings
@@ -257,7 +248,8 @@ for pid1 in waybar rofi swaync ags swaybg; do
 done
 
 sleep 1
-${SCRIPTSDIR}/Refresh.sh 
+${SCRIPTSDIR}/Refresh.sh
+swaybg -i "$wallpaper" -m fill &
 
 sleep 0.5
 # Display notifications for theme and icon changes 

@@ -1,51 +1,26 @@
 #!/usr/bin/env bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
-# Script for keyboard backlights (if supported) using brightnessctl
+DEVICE="smc::kbd_backlight"
 
-iDIR="$HOME/.config/swaync/icons"
-
-# Get keyboard brightness
-get_kbd_backlight() {
-	echo $(brightnessctl -d '*::kbd_backlight' -m | cut -d, -f4)
+get_percent() {
+    brightnessctl -d "$DEVICE" -m | cut -d, -f4 | tr -d '%'
 }
 
-# Get icons
-get_icon() {
-	current=$(get_kbd_backlight | sed 's/%//')
-	if   [ "$current" -le "20" ]; then
-		icon="$iDIR/brightness-20.png"
-	elif [ "$current" -le "40" ]; then
-		icon="$iDIR/brightness-40.png"
-	elif [ "$current" -le "60" ]; then
-		icon="$iDIR/brightness-60.png"
-	elif [ "$current" -le "80" ]; then
-		icon="$iDIR/brightness-80.png"
-	else
-		icon="$iDIR/brightness-100.png"
-	fi
-}
-# Notify
-notify_user() {
-	notify-send -e -h string:x-canonical-private-synchronous:brightness_notif -h int:value:$current -h boolean:SWAYNC_BYPASS_DND:true -u low -i "$icon" "Keyboard" "Brightness:$current%"
+send_notification() {
+    local pct=$1
+    local icon="󰥻"
+    (( pct <= 0  )) && icon="󰹙"
+    (( pct >= 80 )) && icon="󰌌"
+    hyprctl notify 2 1000 "rgb(00f0ff)" "${icon} Teclado: ${pct}%"
 }
 
-# Change brightness
-change_kbd_backlight() {
-	brightnessctl -d *::kbd_backlight set "$1" && get_icon && notify_user
+change_brightness() {
+    brightnessctl -d "$DEVICE" set "$1" &>/dev/null
+    send_notification "$(get_percent)"
 }
 
-# Execute accordingly
 case "$1" in
-	"--get")
-		get_kbd_backlight
-		;;
-	"--inc")
-		change_kbd_backlight "+30%"
-		;;
-	"--dec")
-		change_kbd_backlight "30%-"
-		;;
-	*)
-		get_kbd_backlight
-		;;
+    "--get") get_percent ;;
+    "--inc") change_brightness "+10%" ;;
+    "--dec") change_brightness "10%-" ;;
+    *)       get_percent ;;
 esac
