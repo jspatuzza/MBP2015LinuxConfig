@@ -121,13 +121,21 @@ sleep 0.3
 ulauncher --hide-window &
 disown
 
-# Cambiar tema de Chromium (snap)
-# Si está corriendo: el gsettings de color-scheme es el fallback
-# Si no está corriendo: escribe directamente en Preferences (browser_color_scheme 1=claro, 2=oscuro)
+# Cambiar tema de Chromium snap (browser_color_scheme: 1=claro, 2=oscuro)
 chromium_prefs="$HOME/snap/chromium/common/chromium/Default/Preferences"
-if [ -f "$chromium_prefs" ] && ! pgrep -x chromium > /dev/null 2>&1; then
-    chromium_scheme=1
-    [ "$next_mode" = "Dark" ] && chromium_scheme=2
+if [ -f "$chromium_prefs" ]; then
+    [ "$next_mode" = "Dark" ] && chromium_scheme=2 || chromium_scheme=1
+
+    chromium_was_running=false
+    if pgrep -f "chromium-browser/chrome" > /dev/null 2>&1; then
+        chromium_was_running=true
+        pkill -f "chromium-browser/chrome" 2>/dev/null || true
+        for i in $(seq 1 20); do
+            pgrep -f "chromium-browser/chrome" > /dev/null 2>&1 || break
+            sleep 0.3
+        done
+    fi
+
     python3 - "$chromium_prefs" "$chromium_scheme" << 'PYEOF' 2>/dev/null || true
 import sys, json
 path, scheme = sys.argv[1], int(sys.argv[2])
@@ -136,6 +144,12 @@ d.setdefault('extensions', {}).setdefault('theme', {})['system_theme'] = 0
 d['browser_color_scheme'] = scheme
 with open(path, 'w') as f: json.dump(d, f, separators=(',', ':'))
 PYEOF
+
+    if [ "$chromium_was_running" = true ]; then
+        sleep 0.5
+        chromium --restore-last-session &
+        disown
+    fi
 fi
 
 notify_user "$next_mode"
