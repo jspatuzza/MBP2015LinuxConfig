@@ -1,15 +1,8 @@
 #!/bin/bash
-MODE=$(cat /home/jspatuzza/.cache/.theme_mode 2>/dev/null || echo "Dark")
-
-if [ "$MODE" = "Light" ]; then
-    BG="#fffff0"
-    ACCENT="#2d2d2d"
-    INNER="rgba(45,45,45,0.1)"
-else
-    BG="#2d2d2d"
-    ACCENT="#f2f2f2"
-    INNER="rgba(255,255,255,0.1)"
-fi
+# GDM siempre oscuro: fondo grafito, texto marfil
+BG="#2d2d2d"
+ACCENT="#fffff0"
+INNER="rgba(255,255,240,0.1)"
 
 # Fondo sólido vía dconf
 tee /usr/share/gdm/dconf/95-custom <<DCONF

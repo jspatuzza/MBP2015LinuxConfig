@@ -31,13 +31,13 @@ fi
 
 [ -f "$BACKUP" ] || cp "$GRESOURCE_SRC" "$BACKUP"
 
-# Extraer todos los recursos manteniendo la estructura de paths (Yaru/ incluido)
+# Extraer siempre desde el backup original para no acumular overrides
 while IFS= read -r resource; do
     rel="${resource#/org/gnome/shell/theme/}"
     destfile="${WORKDIR}/${rel}"
     mkdir -p "$(dirname "$destfile")"
-    gresource extract "$GRESOURCE_SRC" "$resource" > "$destfile"
-done < <(gresource list "$GRESOURCE_SRC")
+    gresource extract "$BACKUP" "$resource" > "$destfile"
+done < <(gresource list "$BACKUP")
 
 # Inyectar el CSS override al final de gdm.css
 sed \
@@ -59,7 +59,7 @@ XMLEOF
 while IFS= read -r resource; do
     rel="${resource#/org/gnome/shell/theme/}"
     echo "    <file>${rel}</file>" >> "$XML"
-done < <(gresource list "$GRESOURCE_SRC")
+done < <(gresource list "$BACKUP")
 
 cat >> "$XML" <<'XMLEOF'
   </gresource>
