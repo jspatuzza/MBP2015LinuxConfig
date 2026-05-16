@@ -110,6 +110,34 @@ else
 fi
 makoctl reload 2>/dev/null || true
 
+# Cambiar tema de ulauncher
+if [ "$next_mode" = "Dark" ]; then
+    sed -i 's/"theme-name": "[^"]*"/"theme-name": "waybar-dark"/' "$HOME/.config/ulauncher/settings.json"
+else
+    sed -i 's/"theme-name": "[^"]*"/"theme-name": "waybar-light"/' "$HOME/.config/ulauncher/settings.json"
+fi
+pkill ulauncher 2>/dev/null || true
+sleep 0.3
+ulauncher --hide-window &
+disown
+
+# Cambiar tema de Chromium (snap)
+# Si está corriendo: el gsettings de color-scheme es el fallback
+# Si no está corriendo: escribe directamente en Preferences (browser_color_scheme 1=claro, 2=oscuro)
+chromium_prefs="$HOME/snap/chromium/common/chromium/Default/Preferences"
+if [ -f "$chromium_prefs" ] && ! pgrep -x chromium > /dev/null 2>&1; then
+    chromium_scheme=1
+    [ "$next_mode" = "Dark" ] && chromium_scheme=2
+    python3 - "$chromium_prefs" "$chromium_scheme" << 'PYEOF' 2>/dev/null || true
+import sys, json
+path, scheme = sys.argv[1], int(sys.argv[2])
+with open(path) as f: d = json.load(f)
+d.setdefault('extensions', {}).setdefault('theme', {})['system_theme'] = 0
+d['browser_color_scheme'] = scheme
+with open(path, 'w') as f: json.dump(d, f, separators=(',', ':'))
+PYEOF
+fi
+
 notify_user "$next_mode"
 
 
