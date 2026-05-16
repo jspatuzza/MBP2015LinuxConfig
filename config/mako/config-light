@@ -1,5 +1,5 @@
 font=JetBrains Mono Bold 11
-background-color=#fffff0d9
+background-color=#fffff0f2
 text-color=#2d2d2d
 border-color=#2d2d2d
 border-radius=12
@@ -14,17 +14,17 @@ icons=1
 max-icon-size=48
 
 [urgency=low]
-background-color=#fffff0aa
+background-color=#fffff0d9
 border-color=#8a8a8a
 text-color=#6a6a6a
 
 [urgency=normal]
-background-color=#fffff0d9
+background-color=#fffff0f2
 border-color=#2d2d2d
 text-color=#2d2d2d
 
 [urgency=critical]
-background-color=#fff0f0d9
+background-color=#fff0f0f2
 border-color=#cc0000
 text-color=#cc0000
 default-timeout=0
