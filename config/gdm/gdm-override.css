@@ -1,0 +1,144 @@
+/* ============================================================
+   Hyprlock-style GDM override
+   Placeholders injected by gdm-update-theme.sh:
+     __ACCENT__  → hex color  (e.g. #00c4d4)
+     __ACCENT50__→ rgba 50 %  (e.g. rgba(0,196,212,0.5))
+     __ACCENT10__→ rgba 10 %  (e.g. rgba(0,196,212,0.1))
+     __INNER__   → rgba       (e.g. rgba(255,255,255,0.1))
+     __BUTTON_BG__→ subtle bg (e.g. rgba(255,255,255,0.05))
+   ============================================================ */
+
+/* Dialog — transparent so dconf solid color shows through */
+.login-dialog {
+  background-color: transparent; }
+
+/* ---- Text / labels ---- */
+.login-dialog .user-widget .user-widget-label,
+.unlock-dialog .user-widget .user-widget-label,
+.login-dialog .user-widget.vertical .user-widget-label,
+.login-dialog .user-widget.horizontal .user-widget-label,
+.login-dialog-not-listed-label,
+.login-dialog-auth-list-label {
+  color: __ACCENT__; }
+
+.login-dialog,
+.unlock-dialog {
+  color: __ACCENT__; }
+
+.login-dialog .caps-lock-warning-label,
+.login-dialog .login-dialog-message-warning {
+  color: __ACCENT__; }
+
+/* ---- User avatar ---- */
+.login-dialog .user-widget .user-icon,
+.unlock-dialog .user-widget .user-icon {
+  background-color: __ACCENT10__;
+  color: __ACCENT__; }
+
+/* ---- Password input field ---- */
+.login-dialog-prompt-entry,
+.login-dialog .login-dialog-prompt-entry,
+.unlock-dialog .login-dialog-prompt-entry {
+  background-color: __INNER__;
+  border: 2px solid __ACCENT__;
+  border-radius: 6px;
+  color: __ACCENT__;
+  caret-color: __ACCENT__; }
+
+.login-dialog-prompt-entry:focus,
+.login-dialog .login-dialog-prompt-entry:focus {
+  border-color: __ACCENT__;
+  box-shadow: inset 0 0 0 2px __ACCENT50__ !important; }
+
+.login-dialog-prompt-entry:hover,
+.login-dialog .login-dialog-prompt-entry:hover {
+  border-color: __ACCENT__; }
+
+.login-dialog-prompt-entry:insensitive,
+.login-dialog .login-dialog-prompt-entry:insensitive {
+  background-color: __INNER__;
+  border-color: __ACCENT50__; }
+
+/* ---- Buttons (Cancel, Switch User, Auth Menu, Session List) ---- */
+.login-dialog-button.cancel-button,
+.login-dialog-button.switch-user-button,
+.login-dialog-button.login-dialog-auth-menu-button,
+.login-dialog-button.login-dialog-session-list-button,
+.login-dialog-button.web-login-intro-button {
+  color: __ACCENT__;
+  background-color: __BUTTON_BG__; }
+
+.login-dialog-button.cancel-button:hover,
+.login-dialog-button.switch-user-button:hover,
+.login-dialog-button.login-dialog-auth-menu-button:hover,
+.login-dialog-button.login-dialog-session-list-button:hover,
+.login-dialog-button.web-login-intro-button:hover {
+  color: __ACCENT__;
+  background-color: __ACCENT10__; }
+
+.login-dialog-button.cancel-button:focus,
+.login-dialog-button.switch-user-button:focus,
+.login-dialog-button.login-dialog-auth-menu-button:focus,
+.login-dialog-button.login-dialog-session-list-button:focus,
+.login-dialog-button.web-login-intro-button:focus {
+  color: __ACCENT__;
+  box-shadow: inset 0 0 0 2px __ACCENT50__ !important; }
+
+.login-dialog-button.cancel-button:active,
+.login-dialog-button.switch-user-button:active,
+.login-dialog-button.login-dialog-auth-menu-button:active,
+.login-dialog-button.login-dialog-session-list-button:active,
+.login-dialog-button.web-login-intro-button:active {
+  color: __ACCENT__;
+  background-color: __ACCENT10__; }
+
+.login-dialog-button.cancel-button:insensitive,
+.login-dialog-button.switch-user-button:insensitive,
+.login-dialog-button.login-dialog-auth-menu-button:insensitive,
+.login-dialog-button.login-dialog-session-list-button:insensitive,
+.login-dialog-button.web-login-intro-button:insensitive {
+  color: __ACCENT50__;
+  background-color: __BUTTON_BG__; }
+
+/* ---- Not-listed button ---- */
+.login-dialog-not-listed-button {
+  color: __ACCENT__;
+  background-color: __BUTTON_BG__; }
+
+.login-dialog-not-listed-button:focus {
+  color: __ACCENT__;
+  box-shadow: inset 0 0 0 2px __ACCENT50__ !important;
+  background-color: __ACCENT10__; }
+
+.login-dialog-not-listed-button:hover {
+  color: __ACCENT__;
+  background-color: __ACCENT10__; }
+
+/* ---- User list items ---- */
+.login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item {
+  color: __ACCENT__;
+  background-color: __BUTTON_BG__;
+  border-radius: 8px; }
+
+.login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:selected,
+.login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:focus {
+  color: __ACCENT__;
+  box-shadow: inset 0 0 0 2px __ACCENT50__ !important;
+  background-color: __ACCENT10__; }
+
+.login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:hover {
+  color: __ACCENT__;
+  background-color: __ACCENT10__; }
+
+.login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:logged-in .user-icon {
+  border-color: __ACCENT__; }
+
+/* ---- Auth list ---- */
+.login-dialog-auth-list-item:focus,
+.login-dialog-auth-list-item:selected {
+  background-color: __ACCENT__;
+  color: #2d2d2d; }
+
+/* ---- Session selector popup ---- */
+.login-dialog-auth-menu-button-title {
+  color: __ACCENT50__; }

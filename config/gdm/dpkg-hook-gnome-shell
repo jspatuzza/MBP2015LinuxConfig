@@ -1,0 +1,20 @@
+#!/bin/bash
+# Hook dpkg: reaplica el tema GDM después de actualizaciones de gnome-shell.
+# Instalar en: /etc/apt/apt.conf.d/99-gdm-theme-hook
+# O como DPkg hook en /etc/apt/apt.conf.d/
+#
+# Para instalar manualmente:
+#   sudo cp this_file /usr/local/bin/gdm-theme-post-update.sh
+#   sudo chmod +x /usr/local/bin/gdm-theme-post-update.sh
+#   echo 'DPkg::Post-Invoke {"if dpkg -l gnome-shell | grep -q ^ii; then /usr/local/bin/gdm-theme-post-update.sh; fi";};' \
+#     | sudo tee /etc/apt/apt.conf.d/99-gdm-theme-hook
+
+MODE=$(cat /home/jspatuzza/.cache/.theme_mode 2>/dev/null || echo "Dark")
+if [ "$MODE" = "Light" ]; then
+    ACCENT="#2d2d2d"
+    INNER="rgba(45,45,45,0.1)"
+else
+    ACCENT="#00c4d4"
+    INNER="rgba(255,255,255,0.1)"
+fi
+/usr/local/bin/gdm-apply-gresource.sh "$ACCENT" "$INNER"
