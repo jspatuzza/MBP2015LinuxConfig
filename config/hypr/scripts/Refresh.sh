@@ -46,8 +46,12 @@ env LANG=es_ES.UTF-8 LC_ALL=es_ES.UTF-8 waybar &
 # recargar mako
 makoctl reload 2>/dev/null || true
 
+# Restaurar estado del inhibidor de inactividad
+sleep 0.5
+${SCRIPTSDIR}/Hypridle.sh restore
+
 # Relaunching rainbow borders if the script exists
-sleep 1
+sleep 0.5
 if file_exists "${UserScripts}/RainbowBorders.sh"; then
   ${UserScripts}/RainbowBorders.sh &
 fi

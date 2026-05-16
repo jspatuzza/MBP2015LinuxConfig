@@ -130,7 +130,7 @@
 	"modules": [
 		"custom/nightlight",
 		"custom/light_dark",
-		"idle_inhibitor",
+		"custom/hypridle",
 	]
 },
 "group/display": {

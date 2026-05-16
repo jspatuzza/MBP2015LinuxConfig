@@ -111,9 +111,17 @@ elif [[ "$1" == "switch" ]]; then
     echo "Layout change failed." >&2
     exit 1
   else
+    echo "$next_index" > "$HOME/.cache/.keyboard_layout"
     notify-send -u low -i "$notif_icon" " kb_layout: $new_layout${new_variant:+($new_variant)}"
     echo "Layout change notification sent."
   fi
+elif [[ "$1" == "restore" ]]; then
+  saved_index=$(cat "$HOME/.cache/.keyboard_layout" 2>/dev/null || echo "0")
+  if [[ "$saved_index" =~ ^[0-9]+$ ]] && [[ "$saved_index" != "0" ]]; then
+    next_index="$saved_index"
+    new_layout="${layout_mapping[$next_index]:-}"
+    [[ -n "$new_layout" ]] && change_layout 2>/dev/null || true
+  fi
 else
-  echo "Usage: $0 {status|switch}"
+  echo "Usage: $0 {status|switch|restore}"
 fi

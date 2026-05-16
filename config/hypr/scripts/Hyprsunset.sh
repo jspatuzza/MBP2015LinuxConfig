@@ -72,8 +72,13 @@ cmd_status() {
 
 cmd_init() {
   stop_wlsunset
-  echo "auto" > "$STATE_FILE"
-  nohup wlsunset "${AUTO_ARGS[@]}" >/dev/null 2>&1 &
+  ensure_state
+  state="$(cat "$STATE_FILE")"
+  if [[ "$state" == "forced" ]]; then
+    nohup wlsunset "${FORCED_ARGS[@]}" >/dev/null 2>&1 &
+  else
+    nohup wlsunset "${AUTO_ARGS[@]}" >/dev/null 2>&1 &
+  fi
   disown
 }
 
