@@ -81,6 +81,9 @@ set_waybar_style() {
 # Aplicar tema correspondiente al modo
 set_waybar_style
 
+# Actualizar colores de GDM según el modo
+sudo /usr/local/bin/gdm-update-theme.sh
+
 # Actualizar colores de hyprlock según el modo
 hyprlock_theme="$HOME/.config/hypr/hyprlock-theme.conf"
 if [ "$next_mode" = "Dark" ]; then
