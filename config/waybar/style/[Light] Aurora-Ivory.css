@@ -36,6 +36,10 @@ tooltip {
     color: @graphite;
 }
 
+tooltip label {
+    color: @graphite;
+}
+
 /*-----module groups----*/
 .modules-left,
 .modules-center,
@@ -220,7 +224,10 @@ tooltip {
 /*-----Indicators----*/
 #custom-hypridle.notactive,
 #idle_inhibitor.activated {
-    color: #008800;
+    color: @graphite;
+    background-color: rgba(45, 45, 45, 0.15);
+    border-radius: 10px;
+    transition: background-color 0.3s cubic-bezier(.55,-0.68,.48,1.682);
 }
 
 #clock {
