@@ -81,6 +81,24 @@ set_waybar_style() {
 # Aplicar tema correspondiente al modo
 set_waybar_style
 
+# Actualizar colores de hyprlock según el modo
+hyprlock_theme="$HOME/.config/hypr/hyprlock-theme.conf"
+if [ "$next_mode" = "Dark" ]; then
+    cat > "$hyprlock_theme" <<'EOF'
+$hyprlock_bg     = rgb(45,45,45)
+$hyprlock_text   = rgb(00c4d4)
+$hyprlock_accent = rgb(00c4d4)
+$hyprlock_inner  = rgba(255,255,255,0.1)
+EOF
+else
+    cat > "$hyprlock_theme" <<'EOF'
+$hyprlock_bg     = rgb(255,255,240)
+$hyprlock_text   = rgb(2d2d2d)
+$hyprlock_accent = rgb(2d2d2d)
+$hyprlock_inner  = rgba(45,45,45,0.1)
+EOF
+fi
+
 # Cambiar config de mako
 if [ "$next_mode" = "Dark" ]; then
     cp "$HOME/.config/mako/config-dark" "$HOME/.config/mako/config"
