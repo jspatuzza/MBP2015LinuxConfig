@@ -260,8 +260,8 @@ tooltip {
     color: @aurora;
     background-color: rgba(0, 196, 212, 0.15);
     border-radius: 15px;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: 14px;
+    padding-right: 14px;
     transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
 }
 
