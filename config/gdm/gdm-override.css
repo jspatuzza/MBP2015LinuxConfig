@@ -29,11 +29,10 @@
 .login-dialog .login-dialog-message-warning {
   color: __ACCENT__; }
 
-/* ---- User avatar ---- */
+/* ---- User avatar (hidden) ---- */
 .login-dialog .user-widget .user-icon,
 .unlock-dialog .user-widget .user-icon {
-  background-color: __ACCENT10__;
-  color: __ACCENT__; }
+  display: none !important; }
 
 /* ---- Password input field ---- */
 .login-dialog-prompt-entry,
