@@ -111,7 +111,8 @@
 	"interval": 3,
 	"format": "{}",
 	"on-click": "$HOME/.config/hypr/scripts/Hyprsunset.sh toggle",
-	"tooltip": false,
+	"tooltip": true,
+	"tooltip-format": " Auto: atardecer/amanecer\n Forzado: 3500K todo el día",
 },
 
 "custom/lock": {

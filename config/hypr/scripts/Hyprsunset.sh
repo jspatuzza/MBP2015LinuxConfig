@@ -1,111 +1,85 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Hyprsunset toggle + Waybar status helper
-# Phase 1: manual toggle only (no scheduling)
-# Icons:
-# - Off: bright sun
-# - On: sunset icon if available, otherwise a blue sun
+# wlsunset toggle + Waybar status helper
+#
+# Estados:
+#   auto   — wlsunset corre con lat/lon; aplica temperatura según hora solar
+#   forced — ignora el horario; fuerza temperatura cálida todo el día
 #
 # Customize via env vars:
-#   HYPRSUNSET_TEMP   default 4500 (K)
-#   HYPRSUNSET_ICON_MODE  sunset|blue  (default: sunset)
+#   WLSUNSET_TEMP_NIGHT   default 3500 (K)
+#   WLSUNSET_TEMP_DAY     default 6500 (K)
 
-STATE_FILE="$HOME/.cache/.hyprsunset_state"
-TARGET_TEMP="${HYPRSUNSET_TEMP:-4500}"
-ICON_MODE="${HYPRSUNSET_ICON_MODE:-sunset}"
+STATE_FILE="$HOME/.cache/.wlsunset_state"
+LAT="-34.3603"
+LON="-58.68742"
+TEMP_NIGHT="${WLSUNSET_TEMP_NIGHT:-3500}"
+TEMP_DAY="${WLSUNSET_TEMP_DAY:-6500}"
+
+AUTO_ARGS=(-l "$LAT" -L "$LON" -t "$TEMP_NIGHT" -T "$TEMP_DAY")
+# Sunrise 23:59 / sunset 00:01 → casi siempre "noche" → temperatura baja todo el día
+FORCED_ARGS=(-t "$TEMP_NIGHT" -T "$TEMP_DAY" -S 23:59 -s 00:01)
 
 ensure_state() {
-  [[ -f "$STATE_FILE" ]] || echo "off" > "$STATE_FILE"
+  [[ -f "$STATE_FILE" ]] || echo "auto" > "$STATE_FILE"
 }
 
-# Render icons using pango markup to allow colorization
-icon_off() {
-  # universally available sun symbol
-  printf "☀"
+stop_wlsunset() {
+  if pgrep -x wlsunset >/dev/null 2>&1; then
+    pkill -x wlsunset || true
+    sleep 0.2
+  fi
 }
 
-icon_on() {
-  case "$ICON_MODE" in
-    sunset)
-      # sunset emoji (falls back to tofu if no emoji font)
-      printf "🌇"
-      ;;
-    blue)
-      # no color in text; rely on CSS .on to style if desired
-      printf "☀"
-      ;;
-    *)
-      printf "☀"
-      ;;
-  esac
+icon_auto() {
+  printf $''   # nf-fa-sun  U+F185 — modo automático
+}
+
+icon_forced() {
+  printf $''   # nf-fa-moon U+F186 — forzado encendido
 }
 
 cmd_toggle() {
   ensure_state
-  state="$(cat "$STATE_FILE" || echo off)"
+  state="$(cat "$STATE_FILE" || echo auto)"
+  stop_wlsunset
 
-  # Always stop any running hyprsunset first to avoid CTM manager conflicts
-  if pgrep -x hyprsunset >/dev/null 2>&1; then
-    pkill -x hyprsunset || true
-    # give it a moment to release the CTM manager
-    sleep 0.2
-  fi
-
-if [[ "$state" == "on" ]]; then
-    # Turning OFF: set identity and exit
-    if command -v hyprsunset >/dev/null 2>&1; then
-      nohup hyprsunset -i >/dev/null 2>&1 &
-      # if hyprsunset persists, stop it shortly after applying identity
-      sleep 0.3 && pkill -x hyprsunset || true
-    fi
-    echo off > "$STATE_FILE"
-    notify-send -u low "Hyprsunset: Disabled" || true
+  if [[ "$state" == "auto" ]]; then
+    nohup wlsunset "${FORCED_ARGS[@]}" >/dev/null 2>&1 &
+    disown
+    echo "forced" > "$STATE_FILE"
+    hyprctl notify 2 2000 "rgb(ff9e64)" "󱩞 Luz nocturna forzada — ${TEMP_NIGHT}K todo el día" || true
   else
-    # Turning ON: start hyprsunset at target temp in background
-    if command -v hyprsunset >/dev/null 2>&1; then
-      nohup hyprsunset -t "$TARGET_TEMP" >/dev/null 2>&1 &
-    fi
-    echo on > "$STATE_FILE"
-    notify-send -u low "Hyprsunset: Enabled" "${TARGET_TEMP}K" || true
+    nohup wlsunset "${AUTO_ARGS[@]}" >/dev/null 2>&1 &
+    disown
+    echo "auto" > "$STATE_FILE"
+    hyprctl notify 5 2000 "rgb(e0af68)" "󰖙 Luz nocturna automática — atardecer/amanecer" || true
   fi
 }
 
 cmd_status() {
   ensure_state
-  # Prefer live process detection; fall back to state file
-  if pgrep -x hyprsunset >/dev/null 2>&1; then
-    onoff="on"
-  else
-    onoff="$(cat "$STATE_FILE" || echo off)"
-  fi
+  state="$(cat "$STATE_FILE" || echo auto)"
 
-  if [[ "$onoff" == "on" ]]; then
-    txt="<span size='18pt'>$(icon_on)</span>"
-    cls="on"
-    tip="Night light on @ ${TARGET_TEMP}K"
+  if [[ "$state" == "forced" ]]; then
+    icon_forced
   else
-    txt="<span size='16pt'>$(icon_off)</span>"
-    cls="off"
-    tip="Night light off"
+    icon_auto
   fi
-  printf '{"text":"%s","class":"%s","tooltip":"%s"}\n' "$txt" "$cls" "$tip"
+  echo
 }
 
 cmd_init() {
-  ensure_state
-  state="$(cat "$STATE_FILE" || echo off)"
-
-  if [[ "$state" == "on" ]]; then
-    if command -v hyprsunset >/dev/null 2>&1; then
-      nohup hyprsunset -t "$TARGET_TEMP" >/dev/null 2>&1 &
-    fi
-  fi
+  stop_wlsunset
+  echo "auto" > "$STATE_FILE"
+  nohup wlsunset "${AUTO_ARGS[@]}" >/dev/null 2>&1 &
+  disown
 }
 
 case "${1:-}" in
   toggle) cmd_toggle ;;
   status) cmd_status ;;
-  init) cmd_init ;;
+  init)   cmd_init ;;
   *) echo "usage: $0 [toggle|status|init]" >&2; exit 2 ;;
- esac
+esac
