@@ -58,7 +58,7 @@ tooltip {
     border:1px solid @aurora;
 	padding-top: 2px;
 	padding-bottom: 0px;
-	padding-right: 10px;
+	padding-right: 16px;
 	padding-left: 4px;
 }
 
@@ -259,10 +259,8 @@ tooltip {
 #idle_inhibitor.activated {
     color: @aurora;
     background-color: rgba(0, 196, 212, 0.15);
-    border-radius: 15px;
-    padding-left: 14px;
-    padding-right: 14px;
-    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
+    border-radius: 10px;
+    transition: background-color 0.3s cubic-bezier(.55,-0.68,.48,1.682);
 }
 
 
