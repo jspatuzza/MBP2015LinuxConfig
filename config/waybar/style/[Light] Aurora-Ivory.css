@@ -53,6 +53,10 @@ tooltip label {
     padding-left: 4px;
 }
 
+.modules-center {
+    padding-right: 16px;
+}
+
 #workspaces {
     padding: 0px 1px;
     border-radius: 15px;
@@ -227,6 +231,8 @@ tooltip label {
     color: @graphite;
     background-color: rgba(45, 45, 45, 0.15);
     border-radius: 10px;
+    padding-right: 6px;
+    padding-left: 6px;
     transition: background-color 0.3s cubic-bezier(.55,-0.68,.48,1.682);
 }
 
