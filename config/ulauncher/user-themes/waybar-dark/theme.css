@@ -1,0 +1,83 @@
+/* Waybar Dark — rgba(45,45,45,0.9) fondo grafito, #00c4d4 aurora */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+}
+
+window {
+    background-color: transparent;
+    background: none;
+}
+
+.no-window-shadow {
+    margin: 0;
+}
+
+.app {
+    background-color: rgba(45, 45, 45, 0.9);
+    border: 1px solid rgba(0, 196, 212, 0.5);
+    border-radius: 15px;
+    box-shadow: none;
+}
+
+.input {
+    color: #00c4d4;
+    font-size: 170%;
+    padding: 5px 0 5px 7px;
+    background: transparent;
+    caret-color: #00c4d4;
+}
+
+.input *:selected,
+.input *:focus,
+*:selected:focus {
+    background-color: rgba(0, 196, 212, 0.2);
+    color: #00c4d4;
+}
+
+.item-text {
+    color: rgba(0, 196, 212, 0.65);
+}
+.item-name {
+    color: #00c4d4;
+    font-size: 120%;
+}
+.item-descr {
+    font-size: 80%;
+    color: rgba(0, 196, 212, 0.5);
+}
+
+.selected.item-box {
+    background-color: rgba(0, 196, 212, 0.12);
+    border-left: 1px solid rgba(0, 196, 212, 0.3);
+    border-right: 1px solid rgba(0, 196, 212, 0.3);
+}
+.selected.item-box .item-text {
+    color: rgba(0, 196, 212, 0.8);
+}
+.selected.item-box .item-name {
+    color: #00c4d4;
+}
+
+.item-shortcut {
+    color: rgba(0, 196, 212, 0.4);
+}
+.selected.item-box .item-shortcut {
+    color: rgba(0, 196, 212, 0.7);
+}
+
+.small-result-item .item-name {
+    font-size: 100%;
+}
+
+.prefs-btn {
+    border-radius: 12px;
+    opacity: 0.5;
+}
+.prefs-btn:hover {
+    background-color: rgba(0, 196, 212, 0.12);
+}
+
+.no-window-shadow {
+    margin: -20px;
+}
