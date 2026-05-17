@@ -1,0 +1,5 @@
+# PAM config for hyprlock — usa los stacks comunes de Ubuntu
+auth    include    common-auth
+account include    common-account
+password include   common-password
+session include    common-session
