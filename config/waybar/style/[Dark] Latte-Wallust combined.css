@@ -179,6 +179,13 @@ tooltip {
     background-color: #ff0000;
 }
 
+/* Iconos del system tray — pide variante symbolic para que el color del tema aplique */
+#tray menuitem image,
+#tray image {
+    -gtk-icon-style: symbolic;
+    color: @aurora;
+}
+
 @keyframes blink {
     to {
         color: #000000;

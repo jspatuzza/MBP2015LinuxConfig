@@ -162,7 +162,7 @@
 },
 
 "custom/reboot": {
-    "format": "   󰜉 Reiniciar   ",
+    "format": " 󰜉 Reiniciar ",
     "on-click": "$HOME/.config/hypr/UserScripts/ConfirmAction.sh reiniciar",
     "tooltip": false,
 },

@@ -8,13 +8,13 @@
 {
 
 "custom/shutdown": {
-	"format": "   󰐥 Apagar   ",
+	"format": " 󰐥 Apagar ",
 	"on-click": "$HOME/.config/hypr/UserScripts/ConfirmAction.sh apagar",
 	"tooltip": false,
 },
 
 "custom/suspend": {
-	"format": "   󰒲 Suspender   ",
+	"format": " 󰒲 Suspender ",
 	"on-click": "$HOME/.config/hypr/UserScripts/ConfirmAction.sh suspender",
 	"tooltip": false,
 },

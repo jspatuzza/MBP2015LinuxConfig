@@ -175,6 +175,13 @@ tooltip label {
     background-color: #ff0000;
 }
 
+/* Iconos del system tray — pide variante symbolic para que el color del tema aplique */
+#tray menuitem image,
+#tray image {
+    -gtk-icon-style: symbolic;
+    color: @graphite;
+}
+
 @keyframes blink {
     to {
         color: #cc0000;
