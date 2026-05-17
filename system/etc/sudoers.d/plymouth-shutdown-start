@@ -1,0 +1,2 @@
+# Permite iniciar Plymouth en modo shutdown sin contraseña
+jspatuzza ALL=(root) NOPASSWD: /usr/local/bin/plymouth-shutdown-start

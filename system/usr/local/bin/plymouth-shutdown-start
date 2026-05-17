@@ -1,0 +1,7 @@
+#!/bin/bash
+# Inicia Plymouth en modo shutdown para cubrir la pantalla antes
+# de que GDM muestre su greeter al terminar la sesión Wayland
+/usr/sbin/plymouthd --mode=shutdown --attach-to-session 2>/dev/null
+sleep 0.1
+/usr/bin/plymouth show-splash 2>/dev/null
+exit 0

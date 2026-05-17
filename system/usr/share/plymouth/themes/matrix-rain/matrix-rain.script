@@ -1,0 +1,121 @@
+# Matrix Rain — Plymouth Script Theme
+# Fondo: #2d2d2d | Caracteres: #00c4d4 | Líder: #00ffff
+
+# ── Fondo ────────────────────────────────────────────────────────────────────
+bg = 45 / 255;
+Window.SetBackgroundTopColor(bg, bg, bg);
+Window.SetBackgroundBottomColor(bg, bg, bg);
+
+# ── Parámetros ───────────────────────────────────────────────────────────────
+CHAR_W = 14;
+CHAR_H = 16;
+TRAIL  = 12;
+NCHAR  = 36;
+NLVL   = 5;
+
+# ── Pantalla ─────────────────────────────────────────────────────────────────
+W = Window.GetWidth();
+H = Window.GetHeight();
+if (W == 0) { W = 1920; }
+if (H == 0) { H = 1080; }
+NCOLS = Math.Floor(W / CHAR_W);
+
+# ── Dirección según modo ──────────────────────────────────────────────────────
+# Plymouth.GetMode() devuelve "shutdown" al apagar, "boot" al arrancar
+mode = Plymouth.GetMode();
+UP = (mode == "shutdown");
+
+# ── Set de caracteres ────────────────────────────────────────────────────────
+ch[0]="A"; ch[1]="B"; ch[2]="C"; ch[3]="D"; ch[4]="E"; ch[5]="F";
+ch[6]="G"; ch[7]="H"; ch[8]="I"; ch[9]="J"; ch[10]="K"; ch[11]="L";
+ch[12]="M"; ch[13]="N"; ch[14]="O"; ch[15]="P"; ch[16]="Q"; ch[17]="R";
+ch[18]="S"; ch[19]="T"; ch[20]="U"; ch[21]="V"; ch[22]="W"; ch[23]="X";
+ch[24]="Y"; ch[25]="Z"; ch[26]="0"; ch[27]="1"; ch[28]="2"; ch[29]="3";
+ch[30]="4"; ch[31]="5"; ch[32]="6"; ch[33]="7"; ch[34]="8"; ch[35]="9";
+
+# ── Niveles de brillo (R, G, B) ──────────────────────────────────────────────
+# 0 = líder (cyan muy brillante)  →  4 = cola (casi invisible)
+lr[0]=0.6;  lg[0]=1.0;   lb[0]=1.0;
+lr[1]=0.0;  lg[1]=1.0;   lb[1]=1.0;
+lr[2]=0.0;  lg[2]=0.769; lb[2]=0.831;
+lr[3]=0.0;  lg[3]=0.31;  lb[3]=0.33;
+lr[4]=0.0;  lg[4]=0.09;  lb[4]=0.10;
+
+# ── Pre-renderizar imágenes de caracteres (5 niveles × 36 chars = 180 imgs) ──
+for (l = 0; l < NLVL; l++) {
+    for (c = 0; c < NCHAR; c++) {
+        cimg[l * NCHAR + c] = Image.Text(ch[c], lr[l], lg[l], lb[l]);
+    }
+}
+
+# ── Crear sprites (NCOLS × TRAIL) ────────────────────────────────────────────
+for (col = 0; col < NCOLS; col++) {
+    for (t = 0; t < TRAIL; t++) {
+        s = Sprite();
+        s.SetPosition(-CHAR_W, -CHAR_H, 1);
+        s.SetOpacity(0);
+        spr[col * TRAIL + t] = s;
+    }
+}
+
+# ── Estado inicial de columnas ───────────────────────────────────────────────
+for (col = 0; col < NCOLS; col++) {
+    if (UP) {
+        # Arrancan desde abajo de la pantalla, dispersos
+        hy[col] = H + Math.Floor(Math.Random() * (H + TRAIL * CHAR_H));
+    } else {
+        # Arrancan desde arriba de la pantalla, dispersos
+        hy[col] = -(Math.Floor(Math.Random() * (H + TRAIL * CHAR_H)));
+    }
+    spd[col] = 2 + Math.Floor(Math.Random() * 3);
+    len[col] = 6 + Math.Floor(Math.Random() * 8);
+}
+
+# ── Animación ────────────────────────────────────────────────────────────────
+fun refresh() {
+    for (col = 0; col < NCOLS; col++) {
+        if (UP) {
+            hy[col] = hy[col] - spd[col];
+
+            # Reset: cabeza salió por arriba
+            if (hy[col] < -(len[col] * CHAR_H)) {
+                hy[col]  = H + Math.Floor(Math.Random() * CHAR_H * 6);
+                spd[col] = 2 + Math.Floor(Math.Random() * 3);
+                len[col] = 6 + Math.Floor(Math.Random() * 8);
+            }
+        } else {
+            hy[col] = hy[col] + spd[col];
+
+            # Reset: cabeza salió por abajo
+            if (hy[col] > H + len[col] * CHAR_H) {
+                hy[col]  = -(Math.Floor(Math.Random() * CHAR_H * 6));
+                spd[col] = 2 + Math.Floor(Math.Random() * 3);
+                len[col] = 6 + Math.Floor(Math.Random() * 8);
+            }
+        }
+
+        for (t = 0; t < TRAIL; t++) {
+            s = spr[col * TRAIL + t];
+
+            # Trail: hacia abajo cuando sube, hacia arriba cuando baja
+            if (UP) {
+                row = hy[col] + t * CHAR_H;
+            } else {
+                row = hy[col] - t * CHAR_H;
+            }
+
+            if (row < -CHAR_H || row >= H || t >= len[col]) {
+                s.SetOpacity(0);
+            } else {
+                l = Math.Floor(t * NLVL / len[col]);
+                if (l >= NLVL) { l = NLVL - 1; }
+                c = Math.Floor(Math.Random() * NCHAR);
+                s.SetImage(cimg[l * NCHAR + c]);
+                s.SetPosition(col * CHAR_W, row, 1);
+                s.SetOpacity(1.0);
+            }
+        }
+    }
+}
+
+Plymouth.SetRefreshFunction(refresh);
