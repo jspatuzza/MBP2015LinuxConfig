@@ -1,0 +1,60 @@
+#!/bin/sh
+# Override del script de Plymouth en initramfs (MacBook Pro 2015 + kernel 6.x)
+#
+# Problema: simpledrm es built-in (CONFIG_DRM_SIMPLEDRM=y) y toma /dev/dri/card0.
+# Plymouth abre card0 (simpledrm) pero i915 reclama el display físico como card1,
+# dejando a Plymouth renderizando en un device huérfano (manzanita de Apple visible
+# durante todo el boot).
+#
+# Fix: esperar a que i915 cree /dev/dri/card1, eliminar /dev/dri/card0 (simpledrm)
+# y crear un symlink card0 → card1 antes de arrancar plymouthd.
+
+OPTION=FRAMEBUFFER
+PREREQ="udev"
+
+prereqs()
+{
+	echo "${PREREQ}"
+}
+
+case ${1} in
+	prereqs)
+		prereqs
+		exit 0
+		;;
+esac
+
+SPLASH="false"
+
+for ARGUMENT in $(cat /proc/cmdline)
+do
+	case "${ARGUMENT}" in
+		splash*)
+			SPLASH="true"
+			;;
+
+		nosplash*|plymouth.enable=0)
+			SPLASH="false"
+			;;
+	esac
+done
+
+if [ "${SPLASH}" = "true" ]
+then
+	mkdir -m 0755 /run/plymouth
+
+	# Esperar a que i915 cree /dev/dri/card1 (hasta 5s)
+	for i in $(seq 1 50); do
+		[ -e /dev/dri/card1 ] && break
+		sleep 0.1
+	done
+
+	# Si i915 está listo, redirigir card0 (simpledrm huérfano) al device real
+	if [ -e /dev/dri/card1 ]; then
+		rm -f /dev/dri/card0
+		ln -sf card1 /dev/dri/card0
+	fi
+
+	/usr/sbin/plymouthd --mode=boot --attach-to-session --pid-file=/run/plymouth/pid
+	/usr/bin/plymouth --show-splash
+fi

@@ -1,6 +1,13 @@
 #!/bin/bash
 # Inicia Plymouth en modo shutdown para cubrir la pantalla antes
-# de que GDM muestre su greeter al terminar la sesión Wayland
+# de que GDM muestre su greeter al terminar la sesión Wayland.
+#
+# Fix MacBook Pro 2015 (i915): si card0 no existe pero card1 sí
+# (simpledrm ya fue reemplazado por i915), crear symlink card0 → card1
+# para que plymouthd encuentre el dispositivo correcto.
+if [ -e /dev/dri/card1 ] && [ ! -e /dev/dri/card0 ]; then
+    ln -sf card1 /dev/dri/card0
+fi
 /usr/sbin/plymouthd --mode=shutdown --attach-to-session 2>/dev/null
 sleep 0.1
 /usr/bin/plymouth show-splash 2>/dev/null
