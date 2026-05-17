@@ -16,6 +16,11 @@ LAT="-34.3603"
 LON="-58.68742"
 TEMP_NIGHT="${WLSUNSET_TEMP_NIGHT:-3500}"
 TEMP_DAY="${WLSUNSET_TEMP_DAY:-6500}"
+WAYBAR_SIGNAL=9
+
+notify_waybar() {
+  pkill -RTMIN+$WAYBAR_SIGNAL waybar 2>/dev/null || true
+}
 
 AUTO_ARGS=(-l "$LAT" -L "$LON" -t "$TEMP_NIGHT" -T "$TEMP_DAY")
 # Sunrise 23:59 / sunset 00:01 → casi siempre "noche" → temperatura baja todo el día
@@ -56,6 +61,7 @@ cmd_toggle() {
     echo "auto" > "$STATE_FILE"
     hyprctl notify 5 2000 "rgb(e0af68)" "󰖙 Luz nocturna automática — atardecer/amanecer" || true
   fi
+  notify_waybar
 }
 
 cmd_status() {

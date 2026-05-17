@@ -3,9 +3,14 @@
 
 PROCESS="hypridle"
 STATE_FILE="$HOME/.cache/.hypridle_state"
+WAYBAR_SIGNAL=8
 
 ensure_state() {
   [[ -f "$STATE_FILE" ]] || echo "running" > "$STATE_FILE"
+}
+
+notify_waybar() {
+  pkill -RTMIN+$WAYBAR_SIGNAL waybar 2>/dev/null || true
 }
 
 icon_active()   { printf '\xEF\x81\xAE'; }  # U+F06E fa-eye
@@ -33,6 +38,7 @@ elif [[ "$1" == "toggle" ]]; then
         fi
         echo "running" > "$STATE_FILE"
     fi
+    notify_waybar
 
 elif [[ "$1" == "restore" ]]; then
     ensure_state

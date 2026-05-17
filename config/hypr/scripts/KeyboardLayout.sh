@@ -4,6 +4,11 @@
 
 notif_icon="$HOME/.config/swaync/images/ja.png"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
+WAYBAR_SIGNAL=10
+
+notify_waybar() {
+  pkill -RTMIN+$WAYBAR_SIGNAL waybar 2>/dev/null || true
+}
 
 # Refined ignore list with patterns or specific device names
 ignore_patterns=(
@@ -114,6 +119,7 @@ elif [[ "$1" == "switch" ]]; then
     echo "$next_index" > "$HOME/.cache/.keyboard_layout"
     notify-send -u low -i "$notif_icon" " kb_layout: $new_layout${new_variant:+($new_variant)}"
     echo "Layout change notification sent."
+    notify_waybar
   fi
 elif [[ "$1" == "restore" ]]; then
   saved_index=$(cat "$HOME/.cache/.keyboard_layout" 2>/dev/null || echo "0")
@@ -121,6 +127,7 @@ elif [[ "$1" == "restore" ]]; then
     next_index="$saved_index"
     new_layout="${layout_mapping[$next_index]:-}"
     [[ -n "$new_layout" ]] && change_layout 2>/dev/null || true
+    notify_waybar
   fi
 else
   echo "Usage: $0 {status|switch|restore}"

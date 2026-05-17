@@ -84,6 +84,7 @@
 	"escape": true,
 	"exec-on-event": true,
 	"interval": 60,
+	"signal": 8,
 	"exec": "$HOME/.config/hypr/scripts/Hypridle.sh status",
 	"on-click": "$HOME/.config/hypr/scripts/Hypridle.sh toggle",
 	"on-click-right": "hyprlock"
@@ -92,6 +93,7 @@
 "custom/keyboard": {
 	"exec": "$HOME/.config/hypr/scripts/KeyboardLayout.sh status",
 	"interval": 1,
+	"signal": 10,
 	"format": " {}",
 	"on-click": "$HOME/.config/hypr/scripts/KeyboardLayout.sh switch",
 },
@@ -109,6 +111,7 @@
 "custom/nightlight": {
 	"exec": "$HOME/.config/hypr/scripts/Hyprsunset.sh status",
 	"interval": 3,
+	"signal": 9,
 	"format": "{}",
 	"on-click": "$HOME/.config/hypr/scripts/Hyprsunset.sh toggle",
 	"tooltip": true,
