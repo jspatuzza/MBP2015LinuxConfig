@@ -10,7 +10,7 @@ ACCENT="${1:-#00c4d4}"
 INNER="${2:-rgba(255,255,255,0.1)}"
 
 GRESOURCE_SRC="/usr/share/gnome-shell/gdm-theme.gresource"
-OVERRIDE_CSS="/home/jspatuzza/Hyprland-Dots/config/gdm/gdm-override.css"
+OVERRIDE_CSS="/home/jspatuzza/Main/JSpatuzza/MBP2015LinuxConfig/config/gdm/gdm-override.css"
 WORKDIR=$(mktemp -d)
 BACKUP="${GRESOURCE_SRC}.bak"
 
