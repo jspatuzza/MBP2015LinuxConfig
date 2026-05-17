@@ -9,7 +9,3 @@
 #
 # raid1
 # sd_mod
-
-# i915 early KMS — necesario para que Plymouth renderice en MacBook Pro
-# antes de que systemd tome control (reemplaza simpledrm/EFI framebuffer)
-i915

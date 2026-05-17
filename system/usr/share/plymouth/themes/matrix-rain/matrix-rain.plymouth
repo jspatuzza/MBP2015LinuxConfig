@@ -1,8 +1,0 @@
-[Plymouth Theme]
-Name=Matrix Rain
-Description=Digital rain — fondo #2d2d2d, caracteres #00c4d4
-ModuleName=script
-
-[script]
-ImageDir=/usr/share/plymouth/themes/matrix-rain
-ScriptFile=/usr/share/plymouth/themes/matrix-rain/matrix-rain.script
