@@ -1,16 +1,31 @@
 #!/bin/bash
-# Arranca Plymouth en modo shutdown ANTES de que systemd cierre la sesion,
-# para que el splash "Apagando" cubra la pantalla desde el primer frame y
-# no se vea el frame residual "Iniciando" del plymouthd anterior.
+# Arranca Plymouth en modo shutdown/reboot ANTES de que systemd cierre la
+# sesion, para que el splash "Apagando" cubra la pantalla desde el primer
+# frame y no se vea el frame residual "Iniciando" del plymouthd anterior.
+#
+# Uso: plymouth-shutdown-start [shutdown|reboot]   (default: shutdown)
+#
+# Se invoca desde dos lados:
+#   - Proactivo: ConfirmAction.sh lo llama al confirmar el menu power (sin arg).
+#   - Reactivo: plymouth-{poweroff,reboot,halt}.service.d/override.conf lo
+#     llama como ExecStartPre con el modo correspondiente.
 #
 # Fix MacBook Pro 2015 (i915): si /dev/dri/card0 no existe pero card1 si
 # (simpledrm ya fue reemplazado por i915), crear el symlink card0 -> card1
-# para que plymouthd encuentre el GPU. Defensivo: en un sistema con card0
-# normal, el ln -sf no hace nada porque el [ ! -e ] falla.
+# para que plymouthd encuentre el GPU.
+MODE="${1:-shutdown}"
 if [ -e /dev/dri/card1 ] && [ ! -e /dev/dri/card0 ]; then
     ln -sf card1 /dev/dri/card0
 fi
-/usr/sbin/plymouthd --mode=shutdown --attach-to-session 2>/dev/null
-sleep 0.1
+# Caso A: ya hay plymouthd vivo (proactivo lo arranco antes, o sobrevivio al
+# boot) -> change-mode es instantaneo. Caso B: no hay daemon (caso normal
+# post-login: GDM mato a plymouthd con --retain-splash dejando solo la
+# imagen en framebuffer) -> arrancar plymouthd nuevo. Sin esta rama, el
+# fix reactivo no cubre nada porque plymouth change-mode falla en silencio.
+if /usr/bin/plymouth --ping 2>/dev/null; then
+    /usr/bin/plymouth change-mode --"$MODE" 2>/dev/null
+else
+    /usr/sbin/plymouthd --mode="$MODE" --attach-to-session 2>/dev/null
+fi
 /usr/bin/plymouth show-splash 2>/dev/null
 exit 0
