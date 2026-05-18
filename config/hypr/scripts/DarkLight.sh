@@ -98,35 +98,14 @@ sleep 0.3
 ulauncher --hide-window &
 disown
 
-# Cambiar tema de Chromium snap (browser_color_scheme: 1=claro, 2=oscuro)
+# Chromium snap: cerrar + editar Preferences + relanzar en background.
+# Chromium 147 upstream no soporta hot-reload de la UI (regresión 142),
+# así que el restart es inevitable, pero lo despachamos con setsid -f para
+# que el toggle no espere los ~5s de kill+wait+restart.
 chromium_prefs="$HOME/snap/chromium/common/chromium/Default/Preferences"
 if [ -f "$chromium_prefs" ]; then
     [ "$next_mode" = "Dark" ] && chromium_scheme=2 || chromium_scheme=1
-
-    chromium_was_running=false
-    if pgrep -f "chromium-browser/chrome" > /dev/null 2>&1; then
-        chromium_was_running=true
-        pkill -f "chromium-browser/chrome" 2>/dev/null || true
-        for i in $(seq 1 20); do
-            pgrep -f "chromium-browser/chrome" > /dev/null 2>&1 || break
-            sleep 0.3
-        done
-    fi
-
-    python3 - "$chromium_prefs" "$chromium_scheme" << 'PYEOF' 2>/dev/null || true
-import sys, json
-path, scheme = sys.argv[1], int(sys.argv[2])
-with open(path) as f: d = json.load(f)
-d.setdefault('extensions', {}).setdefault('theme', {})['system_theme'] = 0
-d['browser_color_scheme'] = scheme
-with open(path, 'w') as f: json.dump(d, f, separators=(',', ':'))
-PYEOF
-
-    if [ "$chromium_was_running" = true ]; then
-        sleep 0.5
-        chromium --restore-last-session &
-        disown
-    fi
+    setsid -f "$SCRIPTSDIR/_ChromiumThemeSwap.sh" "$chromium_scheme" </dev/null >/dev/null 2>&1
 fi
 
 notify_user "$next_mode"
@@ -282,8 +261,11 @@ update_theme_mode
 
 
 # C: pasar wallpaper explícito para evitar dependencia de swww query (no instalado).
-# || true para no romper la cadena si wallust falla; el propio script ya hace SIGUSR2 a waybar al final.
-${SCRIPTSDIR}/WallustSwww.sh "$wallpaper" || true
+# Sólo si wallust está disponible — sino el wait_for_templates interno bloquea ~5s
+# esperando archivos que nunca se regeneran.
+if command -v wallust >/dev/null 2>&1; then
+    ${SCRIPTSDIR}/WallustSwww.sh "$wallpaper" || true
+fi
 
 # A: hot-reload de waybar (SIGUSR2 recarga config + CSS sin perder estado).
 # Reemplaza el ciclo killall + sleep 2 + Refresh.sh + sleep 1 anterior.
