@@ -1,0 +1,59 @@
+# Graphite — Plymouth theme
+#
+# Pantalla estática: fondo grafito + texto marfil.
+# Plymouth.GetMode() distingue boot/shutdown/reboot. En modos que no aplican
+# directo (suspend, resume, updates) se cae a "Iniciando".
+
+SCREEN_W = Window.GetWidth();
+SCREEN_H = Window.GetHeight();
+
+# Fondo grafito sólido (matchea el PNG, evita franjas si el aspect no es 16:9).
+Window.SetBackgroundTopColor(0.176, 0.176, 0.176);
+Window.SetBackgroundBottomColor(0.176, 0.176, 0.176);
+
+mode = Plymouth.GetMode();
+if (mode == "shutdown" || mode == "reboot") {
+    img = Image("shutdown.png");
+} else {
+    img = Image("booting.png");
+}
+
+# Escalar manteniendo aspect-ratio (contain): el texto queda centrado y nunca
+# se recorta. Si la pantalla tiene aspect distinto, los bordes quedan grafito.
+img_w = img.GetWidth();
+img_h = img.GetHeight();
+scale_x = SCREEN_W / img_w;
+scale_y = SCREEN_H / img_h;
+scale = scale_x;
+if (scale_y < scale_x) {
+    scale = scale_y;
+}
+scaled = img.Scale(img_w * scale, img_h * scale);
+
+sprite = Sprite();
+sprite.SetImage(scaled);
+sprite.SetX((SCREEN_W - scaled.GetWidth())  / 2);
+sprite.SetY((SCREEN_H - scaled.GetHeight()) / 2);
+sprite.SetZ(-100);
+
+# Plymouth llama a estos callbacks. Como la imagen es estática, no hacemos
+# nada en refresh, pero los definimos para evitar warnings.
+fun refresh_callback() {
+}
+Plymouth.SetRefreshFunction(refresh_callback);
+
+fun boot_progress_callback(duration, progress) {
+}
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+
+# Si el sistema pide password (FDE, etc.), no implementamos prompt: que
+# Plymouth use su fallback default. Esto es suficiente para boot/shutdown
+# sin LUKS.
+
+fun display_message_callback(text) {
+}
+Plymouth.SetDisplayMessageFunction(display_message_callback);
+
+fun hide_message_callback(text) {
+}
+Plymouth.SetHideMessageFunction(hide_message_callback);

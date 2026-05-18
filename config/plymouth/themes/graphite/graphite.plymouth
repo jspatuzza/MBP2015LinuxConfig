@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Graphite
+Description=Pantalla grafito con texto marfil "Iniciando"/"Apagando"
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/graphite
+ScriptFile=/usr/share/plymouth/themes/graphite/graphite.script
