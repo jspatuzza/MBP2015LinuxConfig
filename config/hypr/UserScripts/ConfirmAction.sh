@@ -26,5 +26,9 @@ zenity --question \
     --width=280
 
 if [ $? -eq 0 ]; then
+    # Arrancar Plymouth en modo shutdown ANTES de que systemd mate la sesion,
+    # para que el splash "Apagando" cubra la pantalla desde el primer frame
+    [[ "$CMD" == *poweroff* || "$CMD" == *reboot* ]] && \
+        sudo /usr/local/bin/plymouth-shutdown-start &
     eval "$CMD"
 fi

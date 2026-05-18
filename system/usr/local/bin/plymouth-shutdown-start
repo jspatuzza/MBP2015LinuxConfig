@@ -1,0 +1,16 @@
+#!/bin/bash
+# Arranca Plymouth en modo shutdown ANTES de que systemd cierre la sesion,
+# para que el splash "Apagando" cubra la pantalla desde el primer frame y
+# no se vea el frame residual "Iniciando" del plymouthd anterior.
+#
+# Fix MacBook Pro 2015 (i915): si /dev/dri/card0 no existe pero card1 si
+# (simpledrm ya fue reemplazado por i915), crear el symlink card0 -> card1
+# para que plymouthd encuentre el GPU. Defensivo: en un sistema con card0
+# normal, el ln -sf no hace nada porque el [ ! -e ] falla.
+if [ -e /dev/dri/card1 ] && [ ! -e /dev/dri/card0 ]; then
+    ln -sf card1 /dev/dri/card0
+fi
+/usr/sbin/plymouthd --mode=shutdown --attach-to-session 2>/dev/null
+sleep 0.1
+/usr/bin/plymouth show-splash 2>/dev/null
+exit 0
