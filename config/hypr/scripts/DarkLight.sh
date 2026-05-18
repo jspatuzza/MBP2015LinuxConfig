@@ -22,12 +22,6 @@ qt5ct_light="$HOME/.config/qt5ct/colors/Catppuccin-Latte.conf"
 qt6ct_dark="$HOME/.config/qt6ct/colors/Catppuccin-Mocha.conf"
 qt6ct_light="$HOME/.config/qt6ct/colors/Catppuccin-Latte.conf"
 
-# intial kill process
-for pid in waybar rofi swaync ags swaybg; do
-    killall -SIGUSR1 "$pid"
-done
-
-
 # Determine current theme mode
 if [ "$(cat $HOME/.cache/.theme_mode)" = "Light" ]; then
     next_mode="Dark"
@@ -81,8 +75,8 @@ set_waybar_style() {
 # Aplicar tema correspondiente al modo
 set_waybar_style
 
-# Actualizar colores de GDM según el modo
-sudo /usr/local/bin/gdm-update-theme.sh
+# Actualizar colores de GDM según el modo (B: async, no afecta sesión actual)
+sudo -n /usr/local/bin/gdm-update-theme.sh >/dev/null 2>&1 &
 
 
 # Cambiar config de mako
@@ -175,11 +169,6 @@ for pid_kitty in $(pidof kitty); do
     kill -SIGUSR1 "$pid_kitty"
 done
 
-# Restaurar wallpaper con swaybg
-pkill swaybg 2>/dev/null || true
-swaybg -i "$wallpaper" -m fill &
-
-
 # Set Kvantum Manager theme & QT5/QT6 settings
 if [ "$next_mode" = "Dark" ]; then
     kvantum_theme="catppuccin-mocha-blue"
@@ -193,7 +182,14 @@ fi
 
 sed -i "s|^color_scheme_path=.*$|color_scheme_path=$qt5ct_color_scheme|" "$HOME/.config/qt5ct/qt5ct.conf"
 sed -i "s|^color_scheme_path=.*$|color_scheme_path=$qt6ct_color_scheme|" "$HOME/.config/qt6ct/qt6ct.conf"
-kvantummanager --set "$kvantum_theme"
+
+# D: aplicar Kvantum sin invocar la GUI Qt (sed directo si el config existe)
+kvantum_cfg="$HOME/.config/Kvantum/kvantum.kvconfig"
+if [ -f "$kvantum_cfg" ]; then
+    sed -i "s/^theme=.*/theme=$kvantum_theme/" "$kvantum_cfg"
+elif command -v kvantummanager >/dev/null 2>&1; then
+    kvantummanager --set "$kvantum_theme" &
+fi
 
 
 # set the rofi color for background
@@ -285,20 +281,14 @@ set_custom_gtk_theme "$next_mode"
 update_theme_mode
 
 
-${SCRIPTSDIR}/WallustSwww.sh &&
+# C: pasar wallpaper explícito para evitar dependencia de swww query (no instalado).
+# || true para no romper la cadena si wallust falla; el propio script ya hace SIGUSR2 a waybar al final.
+${SCRIPTSDIR}/WallustSwww.sh "$wallpaper" || true
 
-sleep 2
-# kill process
-for pid1 in waybar rofi swaync ags swaybg; do
-    killall "$pid1"
-done
+# A: hot-reload de waybar (SIGUSR2 recarga config + CSS sin perder estado).
+# Reemplaza el ciclo killall + sleep 2 + Refresh.sh + sleep 1 anterior.
+killall -SIGUSR2 waybar 2>/dev/null || true
 
-sleep 1
-${SCRIPTSDIR}/Refresh.sh
-swaybg -i "$wallpaper" -m fill &
-
-sleep 0.5
-# Display notifications for theme and icon changes 
 notify-send -u low -i "$notif" " Themes switched to:" " $next_mode Mode"
 
 exit 0
