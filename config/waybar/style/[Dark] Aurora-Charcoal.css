@@ -1,0 +1,255 @@
+/* ---- 💫 https://github.com/JaKooLit 💫 ---- */
+/* Dark Mode — Aurora Charcoal */
+/* Inversión RGB exacta del [Light] Aurora-Ivory: fondo grafito profundo, texto e iconos en marfil claro */
+
+@define-color charcoal     #d2d2d2;
+@define-color charcoal-mid #b5b5b5;
+@define-color charcoal-dim rgba(210, 210, 210, 0.5);
+
+@define-color background-module rgba(0, 0, 15, 0.0);
+@define-color border-color      rgba(210, 210, 210, 0.35);
+
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: bold;
+    min-height: 0;
+    font-size: 97%;
+    font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
+}
+
+window#waybar {
+    background: transparent;
+    border-radius: 0px;
+    color: @charcoal;
+}
+
+window#waybar.hidden {
+    opacity: 0;
+}
+
+tooltip {
+    background: rgba(15, 15, 35, 0.97);
+    border-radius: 12px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: @charcoal;
+    color: @charcoal;
+}
+
+tooltip label {
+    color: @charcoal;
+}
+
+/*-----module groups----*/
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: rgba(0, 0, 15, 0.85);
+    border-radius: 15px;
+    border: 1px solid @charcoal;
+    padding-top: 2px;
+    padding-bottom: 0px;
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+.modules-center {
+    padding-right: 16px;
+}
+
+#workspaces {
+    padding: 0px 1px;
+    border-radius: 15px;
+    border: 1px solid @charcoal;
+    font-weight: bold;
+    font-style: normal;
+    opacity: 0.8;
+    color: @charcoal;
+}
+
+#taskbar button,
+#workspaces button {
+    color: rgba(210, 210, 210, 0.4);
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 30px;
+    padding-left: 4px;
+    padding-right: 4px;
+    transition: all 0.5s cubic-bezier(.55,-0.68,.48,1.682);
+}
+
+#taskbar button.active,
+#workspaces button.active {
+    color: @charcoal;
+    background-color: rgba(210, 210, 210, 0.12);
+    border-radius: 15px 15px 15px 15px;
+    padding-left: 8px;
+    padding-right: 8px;
+    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
+}
+
+#workspaces button.focused {
+    color: @charcoal;
+}
+
+#workspaces button.urgent {
+    color: #cc0000;
+    border-radius: 10px;
+}
+
+#taskbar button:hover,
+#workspaces button:hover {
+    color: @charcoal;
+    background-color: rgba(210, 210, 210, 0.08);
+    border-radius: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
+    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
+}
+
+#backlight,
+#backlight-slider,
+#battery,
+#bluetooth,
+#clock,
+#cpu,
+#disk,
+#idle_inhibitor,
+#keyboard-state,
+#memory,
+#mode,
+#mpris,
+#network,
+#power-profiles-daemon,
+#pulseaudio,
+#pulseaudio-slider,
+#taskbar,
+#temperature,
+#tray,
+#window,
+#wireplumber,
+#workspaces,
+#custom-backlight,
+#custom-nightlight,
+#custom-browser,
+#custom-cava_mviz,
+#custom-cycle_wall,
+#custom-dot_update,
+#custom-file_manager,
+#custom-keybinds,
+#custom-keyboard,
+#custom-light_dark,
+#custom-nightlight,
+#custom-lock,
+#custom-hint,
+#custom-hypridle,
+#custom-menu,
+#custom-playerctl,
+#custom-power_vertical,
+#custom-power,
+#custom-quit,
+#custom-reboot,
+#custom-settings,
+#custom-spotify,
+#custom-swaync,
+#custom-tty,
+#custom-updater,
+#custom-hyprpicker,
+#custom-weather,
+#custom-weather.clearNight,
+#custom-weather.cloudyFoggyDay,
+#custom-weather.cloudyFoggyNight,
+#custom-weather.default,
+#custom-weather.rainyDay,
+#custom-weather.rainyNight,
+#custom-weather.severe,
+#custom-weather.showyIcyDay,
+#custom-weather.snowyIcyNight,
+#custom-weather.sunnyDay {
+    color: @charcoal;
+    padding-right: 6px;
+    padding-left: 6px;
+}
+
+#temperature.critical {
+    background-color: #ff0000;
+}
+
+@keyframes blink {
+    to {
+        color: #cc0000;
+    }
+}
+
+#backlight-slider slider,
+#pulseaudio-slider slider {
+    min-width: 0px;
+    min-height: 0px;
+    opacity: 0;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+#backlight-slider trough,
+#pulseaudio-slider trough {
+    min-width: 80px;
+    min-height: 5px;
+    border-radius: 5px;
+    background-color: rgba(210, 210, 210, 0.15);
+}
+
+#backlight-slider highlight,
+#pulseaudio-slider highlight {
+    min-height: 10px;
+    border-radius: 5px;
+    background-color: @charcoal;
+}
+
+#pulseaudio.muted {
+    color: #cc0000;
+}
+
+#battery.critical:not(.charging) {
+    color: #cc0000;
+    animation-name: blink;
+    animation-duration: 3.0s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#custom-hypridle,
+#custom-lock,
+#idle_inhibitor {
+    color: @charcoal;
+}
+
+/*-----Indicators----*/
+#custom-hypridle.notactive,
+#idle_inhibitor.activated {
+    color: @charcoal;
+    background-color: rgba(210, 210, 210, 0.15);
+    border-radius: 10px;
+    padding-right: 6px;
+    padding-left: 6px;
+    transition: background-color 0.3s cubic-bezier(.55,-0.68,.48,1.682);
+}
+
+#clock {
+    color: @charcoal;
+    border-radius: 15px;
+    border: 2px solid @border-color;
+}
+
+#custom-updates {
+    color: @charcoal-mid;
+}
+
+#group-brightness {
+    background-color: rgba(210, 210, 210, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(210, 210, 210, 0.3);
+    margin: 0 6px;
+    padding: 0 4px;
+}

@@ -42,9 +42,9 @@ update_theme_mode() {
     echo "$next_mode" > "$HOME/.cache/.theme_mode"
 }
 
-# Function to notify user
+# Notificación toast deshabilitada — el cambio de tema es visualmente obvio.
 notify_user() {
-    notify-send -u low -i "$notif" " Switching to" " $1 mode"
+    :
 }
 
 # Use sed to replace the palette setting in the wallust config file
@@ -60,7 +60,7 @@ set_waybar_style() {
     waybar_style_link="$HOME/.config/waybar/style.css"
 
     if [ "$next_mode" = "Dark" ]; then
-        style_file="$waybar_styles/[Dark] Latte-Wallust combined.css"
+        style_file="$waybar_styles/[Dark] Aurora-Charcoal.css"
     else
         style_file="$waybar_styles/[Light] Aurora-Ivory.css"
     fi
@@ -74,6 +74,15 @@ set_waybar_style() {
 
 # Aplicar tema correspondiente al modo
 set_waybar_style
+
+# Hyprland: alternar archivo de colores Ivory/Charcoal y recargar en hot
+hypr_theme_dir="$HOME/.config/hypr/themes"
+if [ "$next_mode" = "Dark" ]; then
+    ln -sf "$hypr_theme_dir/colors-dark.conf" "$hypr_theme_dir/active.conf"
+else
+    ln -sf "$hypr_theme_dir/colors-light.conf" "$hypr_theme_dir/active.conf"
+fi
+hyprctl reload >/dev/null 2>&1 || true
 
 # Actualizar colores de GDM según el modo (B: async, no afecta sesión actual)
 sudo -n /usr/local/bin/gdm-update-theme.sh >/dev/null 2>&1 &
@@ -93,31 +102,24 @@ if [ "$next_mode" = "Dark" ]; then
 else
     sed -i 's/"theme-name": "[^"]*"/"theme-name": "waybar-light"/' "$HOME/.config/ulauncher/settings.json"
 fi
-pkill ulauncher 2>/dev/null || true
-sleep 0.3
-ulauncher --hide-window &
-disown
+systemctl --user restart ulauncher.service 2>/dev/null || true
 
-# Chromium snap: cerrar + editar Preferences + relanzar en background.
-# Chromium 147 upstream no soporta hot-reload de la UI (regresión 142),
-# así que el restart es inevitable, pero lo despachamos con setsid -f para
-# que el toggle no espere los ~5s de kill+wait+restart.
-chromium_prefs="$HOME/snap/chromium/common/chromium/Default/Preferences"
-if [ -f "$chromium_prefs" ]; then
-    [ "$next_mode" = "Dark" ] && chromium_scheme=2 || chromium_scheme=1
-    setsid -f "$SCRIPTSDIR/_ChromiumThemeSwap.sh" "$chromium_scheme" </dev/null >/dev/null 2>&1
-fi
+# Chromium snap: con browser_color_scheme=0 (follow system) sigue gsettings
+# en hot a través del portal XDG (probado en 148). El gsettings color-scheme
+# se setea más abajo en set_custom_gtk_theme, así que aquí no hace falta nada.
+# _ChromiumThemeSwap.sh queda como helper idempotente para escenarios donde
+# Preferences se corrompa (browser_color_scheme != 0).
 
 notify_user "$next_mode"
 
 
-# swaync color change
-if [ "$next_mode" = "Dark" ]; then
-    sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(0, 0, 0, 0.8);/' "${swaync_style}"
-	#sed -i '/@define-color noti-bg-alt/s/#.*;/#111111;/' "${swaync_style}"
-else
-    sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(255, 255, 255, 0.9);/' "${swaync_style}"
-	#sed -i '/@define-color noti-bg-alt/s/#.*;/#F0F0F0;/' "${swaync_style}"
+# swaync no está instalado en este sistema (usamos mako). Skip si no existe.
+if [ -f "$swaync_style" ]; then
+    if [ "$next_mode" = "Dark" ]; then
+        sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(0, 0, 15, 0.85);/' "${swaync_style}"
+    else
+        sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(255, 255, 240, 0.85);/' "${swaync_style}"
+    fi
 fi
 
 # ags color change
@@ -133,15 +135,15 @@ if command -v ags >/dev/null 2>&1; then
     fi
 fi
 
-# kitty background color change
+# kitty: paleta Ivory/Charcoal (hot-reload con SIGUSR1)
 if [ "$next_mode" = "Dark" ]; then
-    sed -i '/^foreground /s/^foreground .*/foreground #dddddd/' "${kitty_conf}"
-	sed -i '/^background /s/^background .*/background #000000/' "${kitty_conf}"
-	sed -i '/^cursor /s/^cursor .*/cursor #dddddd/' "${kitty_conf}"
+    sed -i 's/^foreground .*/foreground #d2d2d2/' "${kitty_conf}"
+    sed -i 's/^background .*/background #00000f/' "${kitty_conf}"
+    sed -i 's/^cursor .*/cursor #d2d2d2/' "${kitty_conf}"
 else
-	sed -i '/^foreground /s/^foreground .*/foreground #000000/' "${kitty_conf}"
-	sed -i '/^background /s/^background .*/background #dddddd/' "${kitty_conf}"
-	sed -i '/^cursor /s/^cursor .*/cursor #000000/' "${kitty_conf}"
+    sed -i 's/^foreground .*/foreground #2d2d2d/' "${kitty_conf}"
+    sed -i 's/^background .*/background #fffff0/' "${kitty_conf}"
+    sed -i 's/^cursor .*/cursor #2d2d2d/' "${kitty_conf}"
 fi
 
 for pid_kitty in $(pidof kitty); do
@@ -171,11 +173,13 @@ elif command -v kvantummanager >/dev/null 2>&1; then
 fi
 
 
-# set the rofi color for background
+# Rofi: alternar paleta Ivory/Charcoal vía symlink (rofi releé en cada invocación)
+rofi_palette_link="$HOME/.config/rofi/wallust/colors-rofi.rasi"
+rofi_palette_dir="$HOME/.config/rofi/wallust"
 if [ "$next_mode" = "Dark" ]; then
-    sed -i '/^background:/s/.*/background: rgba(0,0,0,0.7);/' $wallust_rofi
+    ln -sf "$rofi_palette_dir/colors-rofi-dark.rasi" "$rofi_palette_link"
 else
-    sed -i '/^background:/s/.*/background: rgba(255,255,255,0.9);/' $wallust_rofi
+    ln -sf "$rofi_palette_dir/colors-rofi-light.rasi" "$rofi_palette_link"
 fi
 
 
@@ -267,11 +271,9 @@ if command -v wallust >/dev/null 2>&1; then
     ${SCRIPTSDIR}/WallustSwww.sh "$wallpaper" || true
 fi
 
-# A: hot-reload de waybar (SIGUSR2 recarga config + CSS sin perder estado).
-# Reemplaza el ciclo killall + sleep 2 + Refresh.sh + sleep 1 anterior.
-killall -SIGUSR2 waybar 2>/dev/null || true
-
-notify-send -u low -i "$notif" " Themes switched to:" " $next_mode Mode"
+# Reload de waybar via kill+restart (evita acumulación de surfaces huérfanas
+# en monitor secundario que producía SIGUSR2).
+"${SCRIPTSDIR}/ReloadWaybar.sh"
 
 exit 0
 

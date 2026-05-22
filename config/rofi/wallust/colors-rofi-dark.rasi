@@ -1,0 +1,46 @@
+/* Paleta Charcoal (dark mode) — fondo rgba(0,0,15,0.85), fg #d2d2d2 */
+
+* {
+active-background: #d2d2d2;
+active-foreground: #00000f;
+normal-background: #00000f;
+normal-foreground: #d2d2d2;
+urgent-background: #cc0000;
+urgent-foreground: #d2d2d2;
+
+alternate-active-background: #b5b5b5;
+alternate-active-foreground: #00000f;
+alternate-normal-background: #00000f;
+alternate-normal-foreground: #d2d2d2;
+alternate-urgent-background: #00000f;
+alternate-urgent-foreground: #d2d2d2;
+
+selected-active-background: #d2d2d2;
+selected-active-foreground: #00000f;
+selected-normal-background: #d2d2d2;
+selected-normal-foreground: #00000f;
+selected-urgent-background: #cc0000;
+selected-urgent-foreground: #d2d2d2;
+
+background-color: #00000f;
+background: rgba(0,0,15,0.85);
+foreground: #d2d2d2;
+border-color: #d2d2d2;
+
+color0: #00000f;
+color1: #cc0000;
+color2: #d2d2d2;
+color3: #b5b5b5;
+color4: #d2d2d2;
+color5: #d2d2d2;
+color6: #d2d2d2;
+color7: #d2d2d2;
+color8: #5a5a5a;
+color9: #cc0000;
+color10: #d2d2d2;
+color11: #b5b5b5;
+color12: #d2d2d2;
+color13: #d2d2d2;
+color14: #d2d2d2;
+color15: #d2d2d2;
+}
