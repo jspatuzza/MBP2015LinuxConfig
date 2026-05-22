@@ -204,15 +204,10 @@ set_custom_gtk_theme() {
     fi
 
     themes=()
-    icons=()
 
     while IFS= read -r -d '' theme_search; do
         themes+=("$(basename "$theme_search")")
     done < <(find "$gtk_themes_directory" -maxdepth 1 -type d -iname "$search_keywords" -print0)
-
-    while IFS= read -r -d '' icon_search; do
-        icons+=("$(basename "$icon_search")")
-    done < <(find "$icon_directory" -maxdepth 1 -type d -iname "$search_keywords" -print0)
 
     if [ ${#themes[@]} -gt 0 ]; then
         if [ "$mode" == "Dark" ]; then
@@ -233,27 +228,22 @@ set_custom_gtk_theme() {
         echo "No $mode GTK theme found"
     fi
 
-    if [ ${#icons[@]} -gt 0 ]; then
-        if [ "$mode" == "Dark" ]; then
-            selected_icon=${icons[RANDOM % ${#icons[@]}]}
-        else
-            selected_icon=${icons[$RANDOM % ${#icons[@]}]}
-        fi
-        echo "Selected icon theme for $mode mode: $selected_icon"
-        gsettings set $icon_setting "$selected_icon"
-        
-        ## QT5ct icon_theme
-        sed -i "s|^icon_theme=.*$|icon_theme=$selected_icon|" "$HOME/.config/qt5ct/qt5ct.conf"
-        sed -i "s|^icon_theme=.*$|icon_theme=$selected_icon|" "$HOME/.config/qt6ct/qt6ct.conf"
-
-        # Flatpak GTK apps (icons)
-        if command -v flatpak &> /dev/null; then
-            flatpak --user override --filesystem=$HOME/.icons
-            sleep 0.5
-            flatpak --user override --env=ICON_THEME="$selected_icon"
-        fi
+    # Icon theme: Yaru fijo (Light → Yaru, Dark → Yaru-dark)
+    if [ "$mode" == "Dark" ]; then
+        selected_icon="Yaru-dark"
     else
-        echo "No $mode icon theme found"
+        selected_icon="Yaru"
+    fi
+    echo "Selected icon theme for $mode mode: $selected_icon"
+    gsettings set $icon_setting "$selected_icon"
+
+    sed -i "s|^icon_theme=.*$|icon_theme=$selected_icon|" "$HOME/.config/qt5ct/qt5ct.conf"
+    sed -i "s|^icon_theme=.*$|icon_theme=$selected_icon|" "$HOME/.config/qt6ct/qt6ct.conf"
+
+    if command -v flatpak &> /dev/null; then
+        flatpak --user override --filesystem=/usr/share/icons
+        sleep 0.5
+        flatpak --user override --env=ICON_THEME="$selected_icon"
     fi
 }
 
