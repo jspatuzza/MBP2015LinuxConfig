@@ -1,31 +1,87 @@
 #!/bin/bash
-# Arranca Plymouth en modo shutdown/reboot ANTES de que systemd cierre la
-# sesion, para que el splash "Apagando" cubra la pantalla desde el primer
-# frame y no se vea el frame residual "Iniciando" del plymouthd anterior.
+# plymouth-shutdown-start — garantiza que plymouthd esté vivo y en modo
+# shutdown/reboot ANTES y DURANTE el corte de la sesión gráfica, para que
+# el splash "Apagando" cubra desde el primer frame sin frame residual
+# "Iniciando" del plymouthd del boot.
 #
-# Uso: plymouth-shutdown-start [shutdown|reboot]   (default: shutdown)
+# Uso: plymouth-shutdown-start [shutdown|reboot|halt|poweroff]
+#      (default: shutdown)
 #
-# Se invoca desde dos lados:
-#   - Proactivo: ConfirmAction.sh lo llama al confirmar el menu power (sin arg).
-#   - Reactivo: plymouth-{poweroff,reboot,halt}.service.d/override.conf lo
-#     llama como ExecStartPre con el modo correspondiente.
+# Caminos de invocación:
+#   - Proactivo: ConfirmAction.sh lo llama antes de `systemctl poweroff/reboot`.
+#   - Reactivo:  plymouth-{poweroff,reboot,halt}.service.d/override.conf lo
+#     ejecuta como ExecStart durante el tramo final del shutdown.
 #
-# Fix MacBook Pro 2015 (i915): si /dev/dri/card0 no existe pero card1 si
-# (simpledrm ya fue reemplazado por i915), crear el symlink card0 -> card1
-# para que plymouthd encuentre el GPU.
-MODE="${1:-shutdown}"
+# Idempotencia: ambos caminos invocan el mismo helper. Trackeamos el modo
+# aplicado en /run/plymouth/.applied-mode; si ya está, salimos sin tocar el
+# daemon. Eso evita el "reload" doble que causaba flicker "Iniciando" en el
+# medio del shutdown.
+#
+# Fix MBP2015 (i915): si /dev/dri/card0 no existe pero card1 sí (simpledrm
+# ya fue reemplazado por i915), crear symlink card0 → card1 para que
+# plymouthd encuentre el GPU.
+
+set +e
+
+case "${1:-shutdown}" in
+    reboot)
+        CLIENT_MODE="reboot"
+        ;;
+    *)
+        # shutdown, poweroff, halt → mismo modo cliente
+        CLIENT_MODE="shutdown"
+        ;;
+esac
+
+# plymouthd solo acepta boot o shutdown como --mode inicial. Para "reboot"
+# arrancamos como shutdown y luego cambiamos con el cliente (transparente
+# para el theme, que mapea shutdown y reboot al mismo PNG).
+DAEMON_MODE="shutdown"
+
+STATE_DIR=/run/plymouth
+STATE_FILE="$STATE_DIR/.applied-mode"
+
 if [ -e /dev/dri/card1 ] && [ ! -e /dev/dri/card0 ]; then
     ln -sf card1 /dev/dri/card0
 fi
-# Caso A: ya hay plymouthd vivo (proactivo lo arranco antes, o sobrevivio al
-# boot) -> change-mode es instantaneo. Caso B: no hay daemon (caso normal
-# post-login: GDM mato a plymouthd con --retain-splash dejando solo la
-# imagen en framebuffer) -> arrancar plymouthd nuevo. Sin esta rama, el
-# fix reactivo no cubre nada porque plymouth change-mode falla en silencio.
+
+# Idempotencia: ya aplicamos este modo en una invocación previa.
+if [ "$(cat "$STATE_FILE" 2>/dev/null)" = "$CLIENT_MODE" ]; then
+    exit 0
+fi
+
+mark_applied() {
+    mkdir -p "$STATE_DIR"
+    printf '%s\n' "$CLIENT_MODE" > "$STATE_FILE"
+}
+
 if /usr/bin/plymouth --ping 2>/dev/null; then
-    /usr/bin/plymouth change-mode --"$MODE" 2>/dev/null
-else
-    /usr/sbin/plymouthd --mode="$MODE" --attach-to-session 2>/dev/null
+    # Daemon vivo (caso típico: boot dejó plymouthd corriendo en mode=boot).
+    # change-mode + reload aplican el cambio. Una sola vez gracias al flag.
+    /usr/bin/plymouth change-mode --"$CLIENT_MODE" 2>/dev/null
+    /usr/bin/plymouth reload 2>/dev/null
+    /usr/bin/plymouth show-splash 2>/dev/null
+    mark_applied
+    exit 0
+fi
+
+# Daemon muerto (GDM hizo `quit --retain-splash`): arrancar nuevo standalone.
+# SIN --attach-to-session — esa flag ata a la sesión logind y systemd lo
+# mata al cerrar la sesión gráfica, dejando un gap visible de ~1s con el
+# frame default del nuevo daemon. Standalone, plymouthd queda bajo PID 1
+# y sobrevive hasta el shutdown final del kernel.
+/usr/sbin/plymouthd --mode="$DAEMON_MODE" 2>/dev/null
+
+# Esperar a que el socket esté listo (típicamente < 100ms).
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    /usr/bin/plymouth --ping 2>/dev/null && break
+    sleep 0.05
+done
+
+# Si el cliente quería reboot (no shutdown), aplicar el cambio interno.
+if [ "$CLIENT_MODE" != "$DAEMON_MODE" ]; then
+    /usr/bin/plymouth change-mode --"$CLIENT_MODE" 2>/dev/null
 fi
 /usr/bin/plymouth show-splash 2>/dev/null
+mark_applied
 exit 0
