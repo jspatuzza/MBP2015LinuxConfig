@@ -6,13 +6,13 @@
 }
 {
     "label" : "reboot",
-    "action" : "systemctl reboot",
+    "action" : "sh -c 'sudo -n /usr/local/bin/plymouth-shutdown-start reboot || true; systemctl reboot'",
     "text" : "Reboot",
     "keybind" : "r"
 }
 {
     "label" : "shutdown",
-    "action" : "systemctl poweroff",
+    "action" : "sh -c 'sudo -n /usr/local/bin/plymouth-shutdown-start shutdown || true; systemctl poweroff'",
     "text" : "Shutdown",
     "keybind" : "s"
 }

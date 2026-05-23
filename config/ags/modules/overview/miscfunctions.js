@@ -62,10 +62,10 @@ export function launchCustomCommand(command) {
         Todo.add(args.slice(1).join(' '));
     }
     else if (args[0] == '>shutdown') { // Shut down
-        execAsync([`bash`, `-c`, `systemctl poweroff || loginctl poweroff`]).catch(print);
+        execAsync([`bash`, `-c`, `sudo -n /usr/local/bin/plymouth-shutdown-start shutdown || true; systemctl poweroff || loginctl poweroff`]).catch(print);
     }
     else if (args[0] == '>reboot') { // Reboot
-        execAsync([`bash`, `-c`, `systemctl reboot || loginctl reboot`]).catch(print);
+        execAsync([`bash`, `-c`, `sudo -n /usr/local/bin/plymouth-shutdown-start reboot || true; systemctl reboot || loginctl reboot`]).catch(print);
     }
     else if (args[0] == '>sleep') { // Sleep
         execAsync([`bash`, `-c`, `systemctl suspend || loginctl suspend`]).catch(print);
