@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Hyprland
 Comment=An intelligent dynamic tiling Wayland compositor
-Exec=/usr/local/bin/start-hyprland
+Exec=/usr/local/bin/Hyprland
 Type=Application
+DesktopNames=Hyprland
+Keywords=tiling;wayland;compositor;
