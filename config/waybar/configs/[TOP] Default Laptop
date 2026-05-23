@@ -31,7 +31,6 @@
 
 "modules-center": [
 	"custom/separator#blank",
-	"group/notify",
 	"custom/clock",
 	"custom/weather",
 	"group/modes",
@@ -76,7 +75,6 @@
 
 "modules-center": [
 	"custom/separator#blank",
-	"group/notify",
 	"custom/clock",
 	"custom/weather",
 	"custom/nightlight",
