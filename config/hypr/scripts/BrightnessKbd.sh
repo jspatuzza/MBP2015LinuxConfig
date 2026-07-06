@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 DEVICE="smc::kbd_backlight"
+WAYBAR_SIGNAL=11  # custom/kbd_backlight en ModulesCustom
 
 get_percent() {
     brightnessctl -d "$DEVICE" -m | cut -d, -f4 | tr -d '%'
 }
 
 send_notification() {
-    local pct=$1
-    local icon="󰥻"
-    (( pct <= 0  )) && icon="󰹙"
-    (( pct >= 80 )) && icon="󰌌"
-    hyprctl notify 2 1000 "rgb(00f0ff)" "${icon} Teclado: ${pct}%"
+    : # Notificación toast deshabilitada.
+}
+
+notify_waybar() {
+    pkill -RTMIN+$WAYBAR_SIGNAL waybar 2>/dev/null || true
 }
 
 change_brightness() {
     brightnessctl -d "$DEVICE" set "$1" &>/dev/null
+    notify_waybar
     send_notification "$(get_percent)"
 }
 
