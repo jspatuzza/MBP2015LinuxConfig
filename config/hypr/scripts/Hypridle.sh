@@ -3,9 +3,12 @@
 #
 # Implementa dos capas defensivas para inhibir el bloqueo automático:
 #   1) Mata hypridle (que sería el que dispara loginctl lock-session por timeout).
-#   2) Levanta un systemd-inhibit que bloquea idle, sleep y handle-lid-switch
-#      a nivel logind — cubre cualquier otra fuente del sistema que quiera
-#      dormir o bloquear (gsd, swayidle, lid-switch al cerrar tapa, etc).
+#   2) Levanta un systemd-inhibit que bloquea idle, sleep y teclas de
+#      power/suspend a nivel logind — cubre cualquier otra fuente del sistema
+#      que quiera dormir o bloquear (gsd, swayidle, IdleAction de logind, etc).
+#      handle-lid-switch queda FUERA adrede: cerrar la tapa siempre suspende,
+#      incluso con el inhibidor activo (logind ignora los locks "sleep" para
+#      la tapa porque LidSwitchIgnoreInhibited=yes es el default).
 #
 # Estado:
 #   running → hypridle vivo, sin inhibidor systemd → el equipo se bloquea por timeout.
@@ -37,7 +40,7 @@ start_inhibit() {
     return 0
   fi
   systemd-inhibit \
-    --what=idle:sleep:handle-lid-switch:handle-power-key:handle-suspend-key \
+    --what=idle:sleep:handle-power-key:handle-suspend-key \
     --who="Hypridle.sh toggle" \
     --why="Inhibidor manual activado" \
     --mode=block \
