@@ -1,0 +1,6 @@
+# Brillo automático por fuente de energía (complementa los perfiles de TLP):
+#   enchufar   → pantalla 100%, teclado 100%
+#   desenchufar → pantalla 40%, teclado 20%
+# El evento change de ADP1 es el mismo que dispara la conmutación de TLP (85-tlp.rules).
+SUBSYSTEM=="power_supply", KERNEL=="ADP1", ACTION=="change", ATTR{online}=="1", RUN+="/usr/local/bin/PowerBrightness.sh ac"
+SUBSYSTEM=="power_supply", KERNEL=="ADP1", ACTION=="change", ATTR{online}=="0", RUN+="/usr/local/bin/PowerBrightness.sh bat"
