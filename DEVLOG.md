@@ -9,6 +9,24 @@ espejan rutas absolutas del sistema (`/etc`, `/usr/local/bin`, …) y se instala
 
 ---
 
+## 2026-07-06 — Claude Fable 5 — Medición en batería: pendiente resuelto
+
+**Hecho:** se ejecutó el checklist pendiente de la entrada anterior, con el sistema quieto:
+- **Conmutación al desenchufar**: perfecta — TLP (schedutil, EPB 8, turbo off, GPU 800 MHz) y la
+  regla de brillo (pantalla 40%, teclado 20%) dispararon juntos en el evento real.
+- **Powertop en batería: 0 tunables en "Bad"** — los ~30 que figuraban mal en AC eran política
+  deliberada del perfil rendimiento de TLP. No hay desperdicio energético residual.
+- **C-states de paquete** (turbostat 25 s, reposo real, Busy 11%): pc2+pc3 = 34% (vs ~30% pre-poda),
+  PkgWatt 5,63 W (vs ~6,2 W a la mañana). **pc6/pc7 = 0% es techo de hardware** (panel sin PSR
+  mantiene vivo el display engine en Broadwell), no un problema de configuración — no perseguirlo.
+- **Cota optimista de autonomía**: 14,15 W promedio (mín 11,4 / máx 24,4) con brillo 40% y sistema
+  casi quieto → **4,5 h con batería llena**. Rango real del equipo: **3,5 h (uso intenso, brillo
+  100%) a 4,5 h (reposo, brillo 40%)**; el mínimo de 11,4 W sugiere ~5,5 h de techo teórico sin
+  sesiones de Claude corriendo.
+
+**Estado:** sin pendientes de energía/RAM. Nota de método: medir siempre con monitor en background
+y la sesión de IA en silencio — el streaming de texto propio infla Busy% (se midió 38% vs 11% real).
+
 ## 2026-07-05 (noche) — Claude Fable 5 — RAM: zram + poda de servicios · CPU/red: timers y polling
 
 **Hecho:**
