@@ -92,7 +92,7 @@
 
 "custom/keyboard": {
 	"exec": "$HOME/.config/hypr/scripts/KeyboardLayout.sh status",
-	"interval": 1,
+	"interval": 60,
 	"signal": 10,
 	"format": " {}",
 	"on-click": "$HOME/.config/hypr/scripts/KeyboardLayout.sh switch",
@@ -110,7 +110,7 @@
 // Night light (Hyprsunset)
 "custom/nightlight": {
 	"exec": "$HOME/.config/hypr/scripts/Hyprsunset.sh status",
-	"interval": 3,
+	"interval": 60,
 	"signal": 9,
 	"format": "{}",
 	"on-click": "$HOME/.config/hypr/scripts/Hyprsunset.sh toggle",
