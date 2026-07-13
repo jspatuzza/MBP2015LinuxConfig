@@ -9,6 +9,43 @@ espejan rutas absolutas del sistema (`/etc`, `/usr/local/bin`, …) y se instala
 
 ---
 
+## 2026-07-13 — Claude Fable 5 — Optimización integral: idle 15→3 W, YouTube 105→63 °C
+
+**Hecho** (todo medido con sesión en silencio, backups `.bak-20260713`, logs en `~/optim-mbp-20260713/`):
+- **CPU en AC → schedutil** (`system/etc/tlp.d/60-cpu-balanced-ac.conf`): `performance` clavaba 3,1 GHz
+  siempre → 88-98 °C y throttling EN IDLE. Con schedutil + EPB 4: idle 54 °C / 3,3 W (antes 15,1 W),
+  turbo intacto (<1 s a 3,1 GHz bajo carga). Contingencias comentadas en el drop-in, no hicieron falta.
+- **mbpfan** (`system/etc/mbpfan.conf`): el SMC era tímido (43% con cores a 97 °C). Curva
+  min 2000 / low 62 / high 68 / max 80 → fan a 6199 rpm a 80 °C, idle al mínimo. OJO: el algoritmo
+  solo sube cuando la temp SUBE sobre high_temp — si low_temp < idle natural, se planta alto (pasó
+  con 55/63). Rescate si muere sucio: `echo 0 | sudo tee .../applesmc.768/fan1_manual`.
+- **Chromium → Wayland nativo** (`system/home/jspatuzza/.chromium-browser.init`): `hint=auto` caía a
+  X11 porque `XDG_SESSION_TYPE` no llega al entorno systemd --user (ruta ulauncher/GIO). Doble fix:
+  flag explícito `--ozone-platform=wayland` + propagación de la variable en `Startup_Apps.conf`.
+- **Hyprland — dos vampiros de GPU** (medidos): `borderangle loop` = composición continua a 60 fps =
+  ~5 W de GPU 24/7 sin efecto visible (bordes sólidos) → OFF en `UserAnimations.conf`. Blur tras
+  Chromium translúcido (tag browser opacity 0.99 + passes 3 + ignore_opacity) = 23,5 W/86,8 °C →
+  11,1 W/69,5 °C con `no_blur + opacity 1.0` en `UserConfigs/WindowRules.conf`.
+- **YouTube en H.264**: extensión enhanced-h264ify (VP9/AV1 off) en Chromium + **mpv+yt-dlp** como
+  vía integral sin extensión (`config/mpv/mpv.conf` filtro avc1 duro + hwdec vaapi + profile=fast;
+  `config/yt-dlp/config` con `--js-runtimes node`; Super+Shift+Y = `PlayClipboardMpv.sh`, cola por
+  socket IPC). En Chromium NO existe knob nativo anti-VP9/AV1 (verificado en source del tag M150,
+  crbug 40406123 WontFix). Broadwell decodifica VP8 por HW; los caros son VP9/AV1.
+- **Waybar**: intervals cubiertos por signal subidos (keyboard 60→3600, hypridle/nightlight 60→300,
+  kbd_backlight 30→60, backlight 2→5, latentes cpu/network#speed 1→5). Fix en `ReloadWaybar.sh`
+  (ahora trackeado): mataba waybar pero dejaba huérfanos los `playerctl -F` (2 por reload).
+- **Resultado YouTube 1080p**: histórico VP9+XWayland 101-105 °C con throttling → avc1+Wayland
+  19,9% CPU / 63 °C / 7,4 W / 9 de 2500 drops. Con mpv: 12,3% CPU / 72,6 °C (video 60 fps).
+- Paquetes nuevos: vainfo, intel-gpu-tools, lm-sensors, mbpfan (apt) + mpv, pipx→yt-dlp.
+
+**Método (no re-aprender):** `chrome://gpu` "Hardware accelerated" = CAPACIDAD, no uso real — el
+decode de verdad se ve en `drm-engine-video` (fdinfo del gpu-process) o columna VCS de
+`intel_gpu_top`. Chromium usa decode software <~720p a propósito (calidad auto baja ≠ HW roto).
+
+**Pendientes:** limpieza de disipador + repaste (con 23 W sostenidos toca 95 °C en segundos aun con
+fan al máximo — límite físico, no de software); validar en el próximo re-login que los exec-once
+nuevos (XDG_SESSION_TYPE) corran solos.
+
 ## 2026-07-06 — Claude Fable 5 — Medición en batería: pendiente resuelto
 
 **Hecho:** se ejecutó el checklist pendiente de la entrada anterior, con el sistema quieto:
