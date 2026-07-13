@@ -1,0 +1,12 @@
+# Wayland nativo para la snap de Chromium (Canonical).
+# El launcher de la snap NO lee ~/snap/chromium/current/.config/chromium-flags.conf
+# (ese mecanismo es de los paquetes de Arch/AUR y Flatpak, no de la snap):
+# el launcher sólo sourcea ESTE archivo (chromium.launcher -> . $HOME/.chromium-browser.init).
+# Sin el hint, Chromium cae a XWayland y se ve chico/borroso en pantalla HiDPI.
+export CHROMIUM_FLAGS="$CHROMIUM_FLAGS --ozone-platform-hint=auto"
+
+# 2026-07-13: Wayland EXPLÍCITO. El hint=auto caía a X11 cuando Chromium se lanza
+# vía ulauncher/systemd --user porque a ese entorno no llega XDG_SESSION_TYPE
+# (Hyprland solo importaba WAYLAND_DISPLAY y XDG_CURRENT_DESKTOP). El flag
+# explícito gana siempre sobre el hint. Backup: ~/.chromium-browser.init.bak-20260713
+export CHROMIUM_FLAGS="$CHROMIUM_FLAGS --ozone-platform=wayland"
